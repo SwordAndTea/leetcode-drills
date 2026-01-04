@@ -1,4 +1,4 @@
-package _1_30
+package _21_30
 
 import (
 	"algorithm/leetcode/1-10"

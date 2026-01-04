@@ -2,13 +2,18 @@ package sort
 
 func SelectSort(input []int) {
 	for i := 0; i < len(input); i++ {
+		// find the index of the minimum value from i+1 to last and swap it with input[i]
 		minIndex := i
 		for j := i + 1; j < len(input); j++ {
 			if input[j] < input[minIndex] {
 				minIndex = j
 			}
 		}
-		input[i], input[minIndex] = input[minIndex], input[i]
+		// swap value
+		if minIndex != i {
+			input[i], input[minIndex] = input[minIndex], input[i]
+		}
+
 	}
 }
 
@@ -63,6 +68,7 @@ func mergeSortImpl(input []int, start, end int, mergePlace []int) {
 		k++
 	}
 
+	// copy back to original array every merge
 	copy(input[start:end+1], mergePlace[start:end+1])
 }
 
@@ -82,7 +88,7 @@ func partition(input []int, left, right int) int {
 		}
 		input[i], input[j] = input[j], input[i]
 	}
-	// now, i is equal to j
+	// now i equals j, swap guard and input[i]
 	input[i], input[left] = input[left], input[i]
 	return i
 }

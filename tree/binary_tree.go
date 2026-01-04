@@ -3,7 +3,7 @@ package tree
 import "errors"
 
 type Number interface {
-	~int | ~uint | ~float64
+	~int | ~uint | ~float64 // TODO: include all number type
 }
 
 type Node[T Number] struct {
@@ -106,11 +106,11 @@ func Reconstruct[T Number](preorderResult []T, inorderResult []T) (*BinaryTree[T
 	if rootIndex < 0 {
 		return nil, errors.New("")
 	}
-	left, err := Reconstruct(preorderResult[1:rootIndex+1], inorderResult[0:rootIndex])
+	left, err := Reconstruct[T](preorderResult[1:rootIndex+1], inorderResult[0:rootIndex])
 	if err != nil {
 		return nil, err
 	}
-	right, err := Reconstruct(preorderResult[1+rootIndex:], inorderResult[rootIndex+1:])
+	right, err := Reconstruct[T](preorderResult[1+rootIndex:], inorderResult[rootIndex+1:])
 	if err != nil {
 		return nil, err
 	}

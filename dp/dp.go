@@ -1,146 +1,131 @@
 package dp
 
 func LargestSequenceSum(values []int) int {
-	dp := make([]int, len(values))
-	dp[0] = values[0]
-	max := values[0]
+	// dpArray[i] stands for the largest sequences sum that ending with values[i]
+	dpArray := make([]int, len(values))
+	dpArray[0] = values[0]
+	maxValue := values[0]
 	for i := 1; i < len(values); i++ {
-		if dp[i-1]+values[i] > values[i] {
-			dp[i] = dp[i-1] + values[i]
+		if dpArray[i-1] > 0 {
+			dpArray[i] = dpArray[i-1] + values[i]
 		} else {
-			dp[i] = values[i]
+			dpArray[i] = values[i]
 		}
-		if dp[i] > max {
-			max = dp[i]
+		if dpArray[i] > maxValue {
+			maxValue = dpArray[i]
 		}
 	}
-	return max
+	return maxValue
 }
 
 func LongestIncreasingSequence(values []int) int {
-	dp := make([]int, len(values))
-	dp[0] = 1
-	max := 1
-
+	// dpArray[i] stands for the length of longest increasing sequence that ends withs values[i]
+	dpArray := make([]int, len(values))
+	dpArray[0] = 1
+	maxLength := 1
 	for i := 1; i < len(values); i++ {
-		dp[i] = 1
+		dpArray[i] = 1
 		for j := i - 1; j >= 0; j-- {
-			if values[j] <= values[i] && dp[j]+1 > dp[i] {
-				dp[i] = dp[j] + 1
+			if values[i] > values[j] {
+				dpArray[i] = max(dpArray[i], dpArray[j]+1)
 			}
 		}
-		if dp[i] > max {
-			max = dp[i]
+		if dpArray[i] > maxLength {
+			maxLength = dpArray[i]
 		}
 	}
-
-	return max
+	return maxLength
 }
 
-func LongestCommonSubsequence(a, b string) {
-	dp := make([][]int, len(a))
-	for i := 0; i < len(a); i++ {
-		dp[i] = make([]int, len(b))
-		if a[i] == b[0] {
-			dp[i][0] = 1
-		} //else {
-		//	dp[i][0] = 0
-		//}
+func LongestCommonSubsequence(str1, str2 string) int {
+	// dpArray[i][j] stands for the length of the longest common subsequence of str1[0: i) and str[0: j)
+	dpArray := make([][]int, len(str1)+1)
+	for i := range dpArray {
+		dpArray[i] = make([]int, len(str2)+1)
 	}
 
-	for j := 1; j < len(b); j++ {
-		if a[0] == b[j] {
-			dp[0][j] = 1
-		} //else {
-		//	dp[0][j] = 0
-		//}
-	}
-
-	for i := 1; i < len(a); i++ {
-		for j := 1; j < len(b); j++ {
-			if a[i] == b[j] {
-				dp[i][j] = dp[i-1][j-1] + 1
+	for i := 1; i <= len(str1); i++ {
+		for j := 1; j <= len(str2); j++ {
+			if str1[i-1] == str2[j-1] {
+				dpArray[i][j] = dpArray[i-1][j-1] + 1
 			} else {
-				if dp[i-1][j] >= dp[i][j-1] {
-					dp[i][j] = dp[i-1][j]
-				} else {
-					dp[i][j] = dp[i][j-1]
-				}
+				dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1])
 			}
 		}
 	}
+
+	return dpArray[len(str1)][len(str2)]
 }
 
 func LongestPalindromeSubsequence(a string) int {
-	dp := make([][]int, len(a))
-	max := 1
-	for i := 0; i < len(a); i++ {
-		dp[i] = make([]int, len(a))
-		dp[i][i] = 1
-		if i < len(a)-1 && a[i] == a[i+1] {
-			dp[i][i+1] = 1
-			max = 2
-		} else {
-			dp[i][i+1] = 0
+	// dpArray[i][j] stands for the length of the palindrome of a[i: j] (right boundary inclusive)
+	dpArray := make([][]int, len(a))
+	maxValue := 1
+	for i := range dpArray {
+		dpArray[i] = make([]int, len(a))
+		dpArray[i][i] = 1
+		if i+1 < len(a) && a[i+1] == a[i] {
+			dpArray[i][i+1] = 2
+			maxValue = 2
 		}
 	}
+	// NOTE: if when we are calculating dpArray[0][4] and a[0] == a[4]
+	// 	the dpArray[0][4] will be derivative from dpArray[1][3], which is not known yet
+	//for i := 0; i <= len(a); i++ {
+	//	for j := i + 2; j <= len(a); j++ {
+	//		if a[i] == a[j] {
+	//			dpArray[i][j] = dpArray[i+1][j-1] + 2
+	//		}
+	//		if dpArray[i][j] > maxValue {
+	//			maxValue = dpArray[i][j]
+	//		}
+	//	}
+	//}
 
-	for i := 0; i < len(a); i++ {
-		for j := 2; j < len(a); j++ {
-			if a[i] == a[j] && dp[i+1][j-1] == 1 {
-				dp[i][j] = 1
-				if j-i+1 > max {
-					max = j - i + 1
+	// We do calculation by starting solve the string length of 3, then 4, 5, etc.
+	for strLen := 3; strLen < len(a); strLen++ { // the length of string
+		for i := 0; i+strLen-1 < len(a); i++ {
+			j := i + strLen - 1
+			if a[i] == a[j] && dpArray[i+1][j-1] != 0 {
+				dpArray[i][j] = dpArray[i+1][j-1] + 2
+				if dpArray[i][j] > maxValue {
+					maxValue = dpArray[i][j]
 				}
-			} // else {
-			//	 dp[i][j] = 0
-			// }
+			}
 		}
 	}
-
-	return max
+	return maxValue
 }
 
 func OneZeroBackPack(weight []int, value []int, volume int) int {
-	dp := make([][]int, len(weight))
-
-	for i := 0; i < len(weight); i++ {
-		dp[i] = make([]int, volume+1)
+	numberOfItem := len(weight)
+	// dpArray[i][j] stand for the must value of putting first i number of items into a pack of volume j
+	dpArray := make([][]int, numberOfItem)
+	for i := range dpArray {
+		dpArray[i] = make([]int, volume+1)
 	}
 
-	for i := 0; i < len(weight); i++ {
+	for i := 0; i <= numberOfItem; i++ {
 		for j := weight[i]; j <= volume; j++ {
-			chose := dp[i-1][j-weight[i]] + value[i]
-			notChose := dp[i-1][j]
-			if chose >= notChose {
-				dp[i][j] = chose
-			} else {
-				dp[i][j] = notChose
-			}
+			dpArray[i][j] = max(dpArray[i-1][j] /*not choose item i*/, value[i]+dpArray[i-1][j-weight[i]] /*choose item i*/)
 		}
 	}
-
-	return dp[len(weight)-1][volume]
+	return dpArray[numberOfItem-1][volume]
 }
 
 func CompleteBackPack(weight []int, value []int, volume int) int {
-	dp := make([][]int, len(weight))
+	numberOfItem := len(weight)
+	// dpArray[i][j] stand for the must value of putting first i number of items into a pack of volume j
 
-	for i := 0; i < len(weight); i++ {
-		dp[i] = make([]int, volume+1)
+	dpArray := make([][]int, numberOfItem)
+	for i := range dpArray {
+		dpArray[i] = make([]int, volume+1)
 	}
 
-	for i := 0; i < len(weight); i++ {
+	for i := 0; i <= numberOfItem; i++ {
 		for j := weight[i]; j <= volume; j++ {
-			chose := dp[i][j-weight[i]] + value[i]
-			notChose := dp[i-1][j]
-			if chose >= notChose {
-				dp[i][j] = chose
-			} else {
-				dp[i][j] = notChose
-			}
+			dpArray[i][j] = max(dpArray[i-1][j] /*not choose item i*/, value[i]+dpArray[i][j-weight[i]] /*choose item i*/)
 		}
 	}
-
-	return dp[len(weight)-1][volume]
+	return dpArray[numberOfItem-1][volume]
 }

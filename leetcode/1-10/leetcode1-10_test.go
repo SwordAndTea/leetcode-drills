@@ -1,4 +1,4 @@
-package __10
+package _1_10
 
 import "testing"
 

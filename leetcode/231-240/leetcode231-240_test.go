@@ -1,4 +1,4 @@
-package leetcode231_240
+package _231_240
 
 import "testing"
 

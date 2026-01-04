@@ -7,49 +7,42 @@ import (
 	"time"
 )
 
-var dayInMonth = [13][2]int{
-	{0, 0},
-	{31, 31},
-	{28, 29},
-	{31, 31},
-	{30, 30},
-	{31, 31},
-	{30, 30},
-	{31, 31},
-	{31, 31},
-	{30, 30},
-	{31, 31},
-	{30, 30},
-	{31, 31},
+func isLeapYear(year int) bool {
+	return (year%4 == 0 && year%100 != 0) || year%400 == 0
 }
 
-func isLeapYear(year int) bool {
-	return year%4 == 0 && (year%100 != 0 || year%400 == 0)
+func getDayInMonth(month int, year int) int {
+	switch month {
+	case 1, 3, 5, 7, 8, 10, 12:
+		return 31
+	case 4, 6, 9, 11:
+		return 30
+	case 2:
+		if isLeapYear(year) {
+			return 29
+		}
+		return 28
+	}
+	return 0
 }
 
 func CalculateDate(begin, end time.Time) int {
 	bYear, bMonth, bDay := begin.Date()
 	eYear, eMonth, eDay := end.Date()
-	numDays := 0
-	index := 0
-	for bYear < eYear || bMonth < eMonth || bDay < eDay {
+	numberOfDays := 0
+	for bDay < eDay || bMonth < eMonth || bYear < eYear {
 		bDay++
-		if isLeapYear(bYear) {
-			index = 1
-		} else {
-			index = 0
-		}
-		if bDay == dayInMonth[bMonth][index]+1 {
-			bMonth++
+		numberOfDays++
+		if bDay == getDayInMonth(int(bMonth), bYear)+1 {
 			bDay = 1
+			bMonth++
 		}
 		if bMonth == 13 {
 			bYear++
 			bMonth = 1
 		}
-		numDays++
 	}
-	return numDays
+	return numberOfDays
 }
 
 func factorial(n int) int {
@@ -330,7 +323,7 @@ func NewUnionFindSet(elements []int) *UnionFindSet {
 	pre := make(map[int]int)
 
 	for _, v := range elements {
-		pre[v] = v
+		pre[v] = v // in initialization, each element is a set, which root in itself
 	}
 
 	return &UnionFindSet{
@@ -338,17 +331,21 @@ func NewUnionFindSet(elements []int) *UnionFindSet {
 	}
 }
 
+// FindTop find the root of the set that the element belongs to,
+// meanwhile, during finding process, it will zip the path
+// which all element directly point to the root element
 func (ufs *UnionFindSet) FindTop(element int) int {
 	i := element
-	for element != ufs.Pre[element] {
-		element = ufs.Pre[element]
+	for element != ufs.Pre[element] { // if is not root element
+		element = ufs.Pre[element] // go forward
 	}
 
+	// now the element is the root element of current set
 	// zip path
-	for i != ufs.Pre[i] {
-		z := i
-		i = ufs.Pre[i]
-		ufs.Pre[z] = element
+	for i != ufs.Pre[i] && ufs.Pre[i] != element {
+		z := ufs.Pre[i] // temporary hold the previous element
+		ufs.Pre[i] = element
+		i = z
 	}
 
 	return element

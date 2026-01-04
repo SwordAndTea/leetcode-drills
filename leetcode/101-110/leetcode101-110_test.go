@@ -1,4 +1,4 @@
-package _01_110
+package _101_110
 
 import "testing"
 

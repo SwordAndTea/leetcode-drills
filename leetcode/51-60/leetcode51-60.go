@@ -1,4 +1,4 @@
-package _1_60
+package _51_60
 
 func solveNQueens(n int) [][]string {
 	result := make([][]string, 0)
