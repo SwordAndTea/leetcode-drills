@@ -162,6 +162,7 @@ func shortestPathBellmanFordImpl(g *Graph, start int) (map[int]int, map[int][]in
 		}
 	}
 
+	// do one more round iteration, if still has updates, then means there exist negative circle
 	for begin, endNodes := range g.AdjacencyList {
 		for _, v := range endNodes {
 			if dis[begin] != math.MaxInt && dis[v.End] > dis[begin]+v.Weight {
