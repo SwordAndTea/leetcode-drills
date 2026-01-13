@@ -5,6 +5,7 @@ import (
 	"math"
 )
 
+// leetcode problem No. 221
 func maximalSquare(matrix [][]byte) int {
 	m, n := len(matrix), len(matrix[0])
 
@@ -15,7 +16,7 @@ func maximalSquare(matrix [][]byte) int {
 		right[j] = n
 	}
 
-	max := 0
+	theMax := 0
 	for i := 0; i < m; i++ {
 		leftest := 0
 		rightest := n - 1
@@ -51,13 +52,13 @@ func maximalSquare(matrix [][]byte) int {
 			} else {
 				area = heights[j] * heights[j]
 			}
-			if area > max {
-				max = area
+			if area > theMax {
+				theMax = area
 			}
 		}
 	}
 
-	return max
+	return theMax
 }
 
 type TreeNode struct {
