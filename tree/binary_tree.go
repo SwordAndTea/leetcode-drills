@@ -110,12 +110,16 @@ func Reconstruct[T Number](preorderResult []T, inorderResult []T) (*BinaryTree[T
 	if err != nil {
 		return nil, err
 	}
+	if left != nil {
+		root.Left = left.Root
+	}
 	right, err := Reconstruct[T](preorderResult[1+rootIndex:], inorderResult[rootIndex+1:])
 	if err != nil {
 		return nil, err
 	}
-	root.Left = left.Root
-	root.Right = right.Root
+	if right != nil {
+		root.Right = right.Root
+	}
 	return &BinaryTree[T]{Root: root}, nil
 }
 
@@ -126,29 +130,31 @@ type BinarySearchTree[T Number] struct {
 }
 
 func bstDeleteImpl[T Number](node **Node[T], data T) {
-	if node == nil || *node == nil {
+	if node == nil || *node == nil { // not find the node to remove
 		return
 	}
 
-	if (*node).Data == data {
-		if (*node).Left == nil && (*node).Right == nil {
+	if (*node).Data == data { // find the node to remove
+		if (*node).Left == nil && (*node).Right == nil { // leaf node, we can simply delete it
 			*node = nil
-		} else if (*node).Left != nil {
+		} else if (*node).Left != nil { // find the predecessor
 			parent := *node
 			curNode := (*node).Left
 			for curNode.Right != nil {
 				parent = curNode
 				curNode = curNode.Right
 			}
+			// use predecessor to replace the node
 			(*node).Data = curNode.Data
 			parent.Right = curNode.Left
-		} else { // (*node).Right != nil
+		} else { // (*node).Right != nil, find the successor
 			parent := *node
 			curNode := (*node).Right
 			for curNode.Left != nil {
 				parent = curNode
 				curNode = curNode.Left
 			}
+			// use successor to replace the node
 			(*node).Data = data
 			parent.Left = curNode.Right
 		}
@@ -270,18 +276,23 @@ type Heap[T Number] struct {
 }
 
 func (h *Heap[T]) downAdjust(startIndex int) {
-	i, j := startIndex, startIndex*2+1 // j is the left child
+	i, j := startIndex, startIndex*2+1 // as the start index is from 0, not 1, so j is the left child of i
 	for j < len(h.Nodes) {
 		if h.IsMaxHeap {
 			if j+1 < len(h.Nodes) && h.Nodes[j+1] > h.Nodes[j] {
+				// if right child exist and the value of right child is greater than left child
+				// set the greater index to right child index
 				j = j + 1
 			}
 
-			if h.Nodes[j] > h.Nodes[i] {
+			if h.Nodes[i] < h.Nodes[j] {
+				// if value in parent node is lower than the greater child
+				// swap the two
 				h.Nodes[j], h.Nodes[i] = h.Nodes[i], h.Nodes[j]
 				i = j
 				j = i*2 + 1
 			} else {
+				// take the i as the root, it is already a heap, down adjust finish
 				break
 			}
 		} else {
@@ -301,6 +312,7 @@ func (h *Heap[T]) downAdjust(startIndex int) {
 	}
 }
 
+// NewHeap heapify a list of values, the time complex will be O(n), not O(nlogn)
 func NewHeap[T Number](values []T, isMaxHeap bool) *Heap[T] {
 	h := &Heap[T]{
 		Nodes:     values,
@@ -308,6 +320,7 @@ func NewHeap[T Number](values []T, isMaxHeap bool) *Heap[T] {
 	}
 
 	for i := (len(values) - 1) / 2; i >= 0; i-- {
+		// start from the last node that has child, down adjust
 		h.downAdjust(i)
 	}
 
@@ -362,27 +375,32 @@ func (h *Heap[T]) RemoveValueOnce(v T) {
 	}
 }
 
-func (h *Heap[T]) Insert(data T) {
-	h.Nodes = append(h.Nodes, data)
-	index := len(h.Nodes) - 1
-	for index != 0 {
-		father := (index - 1) / 2
+func (h *Heap[T]) upAdjust(startIndex int) {
+	i, j := startIndex, (startIndex-1)/2 // as the index start from 0, j is the parent of i
+	for j >= 0 {
 		if h.IsMaxHeap {
-			if h.Nodes[index] > h.Nodes[father] {
-				h.Nodes[index], h.Nodes[father] = h.Nodes[father], h.Nodes[index]
-				index = father
+			if h.Nodes[i] > h.Nodes[j] {
+				h.Nodes[i], h.Nodes[j] = h.Nodes[j], h.Nodes[i]
+				i = j
+				j = (i - 1) / 2
 			} else {
 				break
 			}
 		} else {
-			if h.Nodes[index] < h.Nodes[father] {
-				h.Nodes[index], h.Nodes[father] = h.Nodes[father], h.Nodes[index]
-				index = father
+			if h.Nodes[i] < h.Nodes[j] {
+				h.Nodes[i], h.Nodes[j] = h.Nodes[j], h.Nodes[i]
+				i = j
+				j = (j - 1) / 2
 			} else {
 				break
 			}
 		}
 	}
+}
+
+func (h *Heap[T]) Insert(data T) {
+	h.Nodes = append(h.Nodes, data)
+	h.upAdjust(len(h.Nodes) - 1)
 }
 
 // huffman tree
