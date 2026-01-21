@@ -101,6 +101,7 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+// leetcode problem No. 235, Lowest Common Ancestor of a Binary Search Tree
 func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 	if p.Val == root.Val {
 		return p
@@ -119,12 +120,21 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 	return lowestCommonAncestor(root.Right, p, q)
 }
 
+// leetcode problem No. 236
 func lowestCommonAncestor2(root, p, q *TreeNode) *TreeNode {
-	if root == nil || root == p || root == q {
+	if root == nil || root == p || root == q { // if curNode is p or q
 		return root
 	}
-	l := lowestCommonAncestor2(root.Left, p, q)
-	r := lowestCommonAncestor2(root.Right, p, q)
+	l := lowestCommonAncestor2(root.Left, p, q)  // try to find p or q in left child
+	r := lowestCommonAncestor2(root.Right, p, q) // try to find p or q in right child
+	// * if we find p in left child and also find q in left child, the r will be nil
+	// and the result will be the left child or the children of left child
+
+	// * if we find p in right child and also find q in right child, the l will be nil
+	// and the result will be the right child or the children of right child
+
+	// * if we find p or q in left child and also find q or q in right child, the p and q
+	// must be located in two separate children, then the root node is the actual common ancestor
 	if l != nil && r != nil {
 		return root
 	}
