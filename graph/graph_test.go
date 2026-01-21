@@ -1,10 +1,13 @@
 package graph
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
 
 func TestGraph_DFSTravel(t *testing.T) {
-	al := make(map[int][]*Node)
-	al[0] = []*Node{
+	al := make(map[int][]*Edge)
+	al[0] = []*Edge{
 		{
 			End: 1,
 		},
@@ -13,7 +16,7 @@ func TestGraph_DFSTravel(t *testing.T) {
 		},
 	}
 
-	al[1] = []*Node{
+	al[1] = []*Edge{
 		{
 			End: 3,
 		},
@@ -22,7 +25,7 @@ func TestGraph_DFSTravel(t *testing.T) {
 		},
 	}
 
-	al[2] = []*Node{
+	al[2] = []*Edge{
 		{
 			End: 1,
 		},
@@ -31,7 +34,7 @@ func TestGraph_DFSTravel(t *testing.T) {
 		},
 	}
 
-	al[4] = []*Node{
+	al[4] = []*Edge{
 		{
 			End: 3,
 		},
@@ -40,21 +43,22 @@ func TestGraph_DFSTravel(t *testing.T) {
 		},
 	}
 
-	al[5] = []*Node{
+	al[5] = []*Edge{
 		{
 			End: 3,
 		},
 	}
 
 	g := NewGraph(al)
-	r := g.DFSTravel()
-
-	t.Logf("%+v", r)
+	r := g.DFSTravel(0)
+	if !slices.Equal(r, []int{0, 1, 3, 4, 5, 2}) {
+		t.Errorf("dfs travel not correct, result: %+v", r)
+	}
 }
 
 func TestGraph_BFSTravel(t *testing.T) {
-	al := make(map[int][]*Node)
-	al[0] = []*Node{
+	al := make(map[int][]*Edge)
+	al[0] = []*Edge{
 		{
 			End: 1,
 		},
@@ -63,7 +67,7 @@ func TestGraph_BFSTravel(t *testing.T) {
 		},
 	}
 
-	al[1] = []*Node{
+	al[1] = []*Edge{
 		{
 			End: 3,
 		},
@@ -72,7 +76,7 @@ func TestGraph_BFSTravel(t *testing.T) {
 		},
 	}
 
-	al[2] = []*Node{
+	al[2] = []*Edge{
 		{
 			End: 1,
 		},
@@ -81,7 +85,7 @@ func TestGraph_BFSTravel(t *testing.T) {
 		},
 	}
 
-	al[4] = []*Node{
+	al[4] = []*Edge{
 		{
 			End: 3,
 		},
@@ -90,21 +94,23 @@ func TestGraph_BFSTravel(t *testing.T) {
 		},
 	}
 
-	al[5] = []*Node{
+	al[5] = []*Edge{
 		{
 			End: 3,
 		},
 	}
 
 	g := NewGraph(al)
-	r := g.BFSTravel()
+	r := g.BFSTravel(0)
 
-	t.Logf("%+v", r)
+	if !slices.Equal(r, []int{0, 1, 2, 3, 4, 5}) {
+		t.Errorf("bfs travel not correct, result: %+v", r)
+	}
 }
 
 func TestGraph_ShortestPathDijkstra(t *testing.T) {
-	al := make(map[int][]*Node)
-	al[0] = []*Node{
+	al := make(map[int][]*Edge)
+	al[0] = []*Edge{
 		{
 			End:    1,
 			Weight: 1,
@@ -119,21 +125,21 @@ func TestGraph_ShortestPathDijkstra(t *testing.T) {
 		},
 	}
 
-	al[1] = []*Node{
+	al[1] = []*Edge{
 		{
 			End:    3,
 			Weight: 2,
 		},
 	}
 
-	al[2] = []*Node{
+	al[2] = []*Edge{
 		{
 			End:    5,
 			Weight: 1,
 		},
 	}
 
-	al[3] = []*Node{
+	al[3] = []*Edge{
 		{
 			End:    2,
 			Weight: 2,
@@ -144,7 +150,7 @@ func TestGraph_ShortestPathDijkstra(t *testing.T) {
 		},
 	}
 
-	al[4] = []*Node{
+	al[4] = []*Edge{
 		{
 			End:    5,
 			Weight: 3,
@@ -158,8 +164,8 @@ func TestGraph_ShortestPathDijkstra(t *testing.T) {
 }
 
 func TestGraph_ShortestPathBellmanFord(t *testing.T) {
-	al := make(map[int][]*Node)
-	al[0] = []*Node{
+	al := make(map[int][]*Edge)
+	al[0] = []*Edge{
 		{
 			End:    1,
 			Weight: 1,
@@ -174,21 +180,21 @@ func TestGraph_ShortestPathBellmanFord(t *testing.T) {
 		},
 	}
 
-	al[1] = []*Node{
+	al[1] = []*Edge{
 		{
 			End:    3,
 			Weight: 2,
 		},
 	}
 
-	al[2] = []*Node{
+	al[2] = []*Edge{
 		{
 			End:    5,
 			Weight: 1,
 		},
 	}
 
-	al[3] = []*Node{
+	al[3] = []*Edge{
 		{
 			End:    2,
 			Weight: 2,
@@ -199,7 +205,7 @@ func TestGraph_ShortestPathBellmanFord(t *testing.T) {
 		},
 	}
 
-	al[4] = []*Node{
+	al[4] = []*Edge{
 		{
 			End:    5,
 			Weight: 3,
@@ -218,8 +224,8 @@ func TestGraph_ShortestPathBellmanFord(t *testing.T) {
 }
 
 func TestGraph_ShortestPathSPFA(t *testing.T) {
-	al := make(map[int][]*Node)
-	al[0] = []*Node{
+	al := make(map[int][]*Edge)
+	al[0] = []*Edge{
 		{
 			End:    1,
 			Weight: 1,
@@ -234,21 +240,21 @@ func TestGraph_ShortestPathSPFA(t *testing.T) {
 		},
 	}
 
-	al[1] = []*Node{
+	al[1] = []*Edge{
 		{
 			End:    3,
 			Weight: 2,
 		},
 	}
 
-	al[2] = []*Node{
+	al[2] = []*Edge{
 		{
 			End:    5,
 			Weight: 1,
 		},
 	}
 
-	al[3] = []*Node{
+	al[3] = []*Edge{
 		{
 			End:    2,
 			Weight: 2,
@@ -259,7 +265,7 @@ func TestGraph_ShortestPathSPFA(t *testing.T) {
 		},
 	}
 
-	al[4] = []*Node{
+	al[4] = []*Edge{
 		{
 			End:    5,
 			Weight: 3,
@@ -278,8 +284,8 @@ func TestGraph_ShortestPathSPFA(t *testing.T) {
 }
 
 func TestGraph_ShortestPathFloyd(t *testing.T) {
-	al := make(map[int][]*Node)
-	al[0] = []*Node{
+	al := make(map[int][]*Edge)
+	al[0] = []*Edge{
 		{
 			End:    1,
 			Weight: 1,
@@ -294,21 +300,21 @@ func TestGraph_ShortestPathFloyd(t *testing.T) {
 		},
 	}
 
-	al[1] = []*Node{
+	al[1] = []*Edge{
 		{
 			End:    3,
 			Weight: 2,
 		},
 	}
 
-	al[2] = []*Node{
+	al[2] = []*Edge{
 		{
 			End:    5,
 			Weight: 1,
 		},
 	}
 
-	al[3] = []*Node{
+	al[3] = []*Edge{
 		{
 			End:    2,
 			Weight: 2,
@@ -319,7 +325,7 @@ func TestGraph_ShortestPathFloyd(t *testing.T) {
 		},
 	}
 
-	al[4] = []*Node{
+	al[4] = []*Edge{
 		{
 			End:    5,
 			Weight: 3,
@@ -330,6 +336,6 @@ func TestGraph_ShortestPathFloyd(t *testing.T) {
 
 	g := NewGraph(al)
 
-	dis := g.ShortestPathFloyd()
+	dis, _ := g.ShortestPathFloyd()
 	t.Logf("dis for 0 to 5 is %d", dis[0][5])
 }
