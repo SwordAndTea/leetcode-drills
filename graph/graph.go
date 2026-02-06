@@ -26,6 +26,9 @@ func NewGraph(adjacencyList map[int][]*Edge) *Graph {
 // DFSTravel performs depth-first search traversal starting from the specified vertex.
 // The start parameter is required because Go map iteration order is non-deterministic,
 // which would cause inconsistent traversal results if we iterate over AdjacencyList to pick a starting vertex.
+//
+// The time complexity is O(V+E) and the space complexity is O(H), H is the max depth of the graph,
+// in worst case, O(V) a long chain, best case O(log V)
 func (g *Graph) DFSTravel(start int) []int {
 	visitInfo := make(map[int]bool)
 	result := make([]int, 0, len(g.AdjacencyList))
@@ -57,6 +60,9 @@ func (g *Graph) DFSTravel(start int) []int {
 // BFSTravel performs breadth-first search traversal starting from the specified vertex.
 // The start parameter is required because Go map iteration order is non-deterministic,
 // which would cause inconsistent traversal results if we iterate over AdjacencyList to pick a starting vertex.
+//
+// The time complexity of BFS is O(V+E) and the space complexity is O(V)
+// (worst case: the queue holds almost all vertices, e.g., a wide graph)
 func (g *Graph) BFSTravel(start int) []int {
 	inQueued := make(map[int]bool, len(g.AdjacencyList)) // whether the node has been put into visit queue before or not
 	result := make([]int, 0, len(g.AdjacencyList))
