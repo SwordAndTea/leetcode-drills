@@ -90,8 +90,8 @@ func TestListPrime(t *testing.T) {
 	fmt.Printf("res is %+v", res)
 }
 
-func TestCombination(t *testing.T) {
-	if Combination(5, 3) != 10 {
+func TestCombinationNumber(t *testing.T) {
+	if CombinationNumber(5, 3) != 10 {
 		t.Fatalf("calculate combination number fail")
 	}
 }

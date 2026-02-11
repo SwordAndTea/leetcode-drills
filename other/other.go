@@ -177,7 +177,9 @@ func ListPrime(a int) []int {
 	return res
 }
 
-func Combination(n, m int) int {
+// CombinationNumber number of choices of choosing m elements from n
+// Note: CombinationNumber(n, m) equals CombinationNumber(n, n-m)
+func CombinationNumber(n, m int) int {
 	res := 1
 	for i := 1; i <= m; i++ {
 		res = res * (n - m + i) / i
