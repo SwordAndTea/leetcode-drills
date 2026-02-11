@@ -5,6 +5,125 @@ import (
 	"sort"
 )
 
+// leetcode problem No. 211
+// basically similar to problem No. 208
+
+type WordDictionary struct {
+	IsWord   bool
+	NextChar [26]*WordDictionary
+}
+
+func Constructor() WordDictionary {
+	return WordDictionary{}
+}
+
+func (this *WordDictionary) AddWord(word string) {
+	curLevel := this
+	for _, w := range word {
+		if curLevel.NextChar[w-'a'] == nil {
+			curLevel.NextChar[w-'a'] = &WordDictionary{}
+		}
+		curLevel = curLevel.NextChar[w-'a']
+	}
+	curLevel.IsWord = true
+}
+
+func (this *WordDictionary) Search(word string) bool {
+	if len(word) == 0 {
+		return this.IsWord
+	}
+	index := word[0] - 'a'
+	if index < 0 || index >= 26 {
+		return false
+	}
+	if this.NextChar[index] == nil {
+		return false
+	}
+	return this.Search(word[1:])
+}
+
+// leetcode problem No. 212
+
+type Trie struct {
+	IsWord   bool
+	Children [26]*Trie
+}
+
+func NewTrie() *Trie {
+	return &Trie{}
+}
+
+func (this *Trie) Insert(word string) {
+	curTrie := this
+	for _, w := range word {
+		if curTrie.Children[w-'a'] == nil {
+			curTrie.Children[w-'a'] = NewTrie()
+		}
+		curTrie = curTrie.Children[w-'a']
+	}
+	curTrie.IsWord = true
+}
+
+func findWords(board [][]byte, words []string) []string {
+	tire := NewTrie()
+	for _, word := range words {
+		tire.Insert(word)
+	}
+
+	m, n := len(board), len(board[0])
+
+	result := make([]string, 0)
+	var dfs func(curI, curJ int, curTire *Trie, curStr []byte)
+	dfs = func(curI, curJ int, curTire *Trie, curStr []byte) {
+		boardChar := board[curI][curJ]
+		trieIndex := boardChar - 'a'
+		if boardChar == '#' || curTire.Children[trieIndex] == nil { // c == '#' means board cell has been visited
+			return
+		}
+		curStr = append(curStr, boardChar)
+		curTire = curTire.Children[trieIndex]
+		if curTire.IsWord {
+			result = append(result, string(curStr))
+			curTire.IsWord = false // avoid multiple path to construct this word
+		}
+
+		board[curI][curJ] = '#' // mark as visited
+
+		// search left
+		if curJ-1 >= 0 {
+			dfs(curI, curJ-1, curTire, curStr)
+		}
+
+		// search right
+		if curJ+1 < n {
+			dfs(curI, curJ+1, curTire, curStr)
+		}
+
+		// search up
+		if curI-1 >= 0 {
+			dfs(curI-1, curJ, curTire, curStr)
+		}
+
+		// search down
+		if curI+1 < m {
+			dfs(curI+1, curJ, curTire, curStr)
+		}
+
+		// reset
+		board[curI][curJ] = boardChar
+		curStr = curStr[0 : len(curStr)-1]
+	}
+
+	curStr := make([]byte, 0, m*n)
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			dfs(i, j, tire, curStr)
+		}
+	}
+
+	return result
+}
+
 // leetcode problem No. 213
 func rob(nums []int) int {
 	n := len(nums)
@@ -31,127 +150,6 @@ func rob(nums []int) int {
 	}
 
 	return max(dp[n-1], v1)
-}
-
-type WordDictionary struct {
-	IsWord   bool
-	NextChar [26]*WordDictionary
-}
-
-func Constructor() WordDictionary {
-	return WordDictionary{IsWord: false, NextChar: [26]*WordDictionary{}}
-}
-
-func (this *WordDictionary) AddWord(word string) {
-	curLevel := this
-	for _, w := range word {
-		if curLevel.NextChar[w-'a'] == nil {
-			curLevel.NextChar[w-'a'] = &WordDictionary{IsWord: false, NextChar: [26]*WordDictionary{}}
-		}
-		curLevel = curLevel.NextChar[w-'a']
-	}
-	curLevel.IsWord = true
-}
-
-func doSearch(curDictionaryLevel *WordDictionary, word string, curIndex int) bool {
-	if curDictionaryLevel == nil {
-		return false
-	}
-	if curIndex == len(word) {
-		return curDictionaryLevel.IsWord
-	}
-	curChar := word[curIndex]
-	if curChar == '.' {
-		for _, next := range curDictionaryLevel.NextChar {
-			if doSearch(next, word, curIndex+1) {
-				return true
-			}
-		}
-		return false
-	}
-	return doSearch(curDictionaryLevel.NextChar[word[curIndex]-'a'], word, curIndex+1)
-}
-
-func (this *WordDictionary) Search(word string) bool {
-	return doSearch(this, word, 0)
-}
-
-type Trie struct {
-	IsWord   bool
-	Children [26]*Trie
-}
-
-func NewTrie() *Trie {
-	return &Trie{IsWord: false, Children: [26]*Trie{}}
-}
-
-func (this *Trie) Insert(word string) {
-	curTrie := this
-	for _, w := range word {
-		if curTrie.Children[w-'a'] == nil {
-			curTrie.Children[w-'a'] = NewTrie()
-		}
-		curTrie = curTrie.Children[w-'a']
-	}
-	curTrie.IsWord = true
-}
-
-func findWords(board [][]byte, words []string) []string {
-	tire := NewTrie()
-	for _, word := range words {
-		tire.Insert(word)
-	}
-
-	m, n := len(board), len(board[0])
-
-	result := make([]string, 0)
-	var dfs func(curI, curJ int, curTire *Trie, curStr []byte)
-	dfs = func(curI, curJ int, curTire *Trie, curStr []byte) {
-		c := board[curI][curJ]
-		if c == '#' || curTire.Children[c-'a'] == nil { // c == '#' means board cell has been visited
-			return
-		}
-		curStr = append(curStr, c)
-		curTire = curTire.Children[c-'a']
-		if curTire.IsWord {
-			result = append(result, string(curStr))
-			curTire.IsWord = false
-		}
-
-		board[curI][curJ] = '#' // mark as visited
-
-		// search left
-		if curJ-1 >= 0 {
-			dfs(curI, curJ-1, curTire, curStr)
-		}
-
-		// search right
-		if curJ+1 < n {
-			dfs(curI, curJ+1, curTire, curStr)
-		}
-
-		// search up
-		if curI-1 >= 0 {
-			dfs(curI-1, curJ, curTire, curStr)
-		}
-
-		// search down
-		if curI+1 < m {
-			dfs(curI+1, curJ, curTire, curStr)
-		}
-
-		board[curI][curJ] = c
-		curStr = curStr[0 : len(curStr)-1]
-	}
-
-	curStr := make([]byte, 0, m*n)
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			dfs(i, j, tire, curStr)
-		}
-	}
-
-	return result
 }
 
 func shortestPalindrome(s string) string {

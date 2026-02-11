@@ -2,7 +2,6 @@ package _201_210
 
 import (
 	"math"
-	"strings"
 )
 
 func rangeBitwiseAnd(left int, right int) int {
@@ -158,29 +157,59 @@ func canFinish(numCourses int, prerequisites [][]int) bool {
 	return true
 }
 
+// leetcode problem No. 208
+
 type Trie struct {
-	wordMap map[string]bool
+	isEnd    bool
+	Children [26]*Trie
 }
 
 func Constructor() Trie {
-	return Trie{wordMap: make(map[string]bool)}
+	return Trie{}
 }
 
 func (this *Trie) Insert(word string) {
-	this.wordMap[word] = true
+	if len(word) == 0 {
+		this.isEnd = true
+		return
+	}
+	index := word[0] - 'a'
+	if index < 0 || index >= 26 {
+		return
+	}
+	if this.Children[index] == nil {
+		this.Children[index] = &Trie{}
+	}
+	this.Children[index].Insert(word[1:])
 }
 
 func (this *Trie) Search(word string) bool {
-	return this.wordMap[word]
+	if len(word) == 0 {
+		return this.isEnd
+	}
+	index := word[0] - 'a'
+	if index < 0 || index >= 26 {
+		return false
+	}
+	if this.Children[index] == nil {
+		return false
+	}
+	return this.Children[index].Search(word[1:])
 }
 
 func (this *Trie) StartsWith(prefix string) bool {
-	for k, _ := range this.wordMap {
-		if strings.HasPrefix(k, prefix) {
-			return true
+	cur := this
+	for i := 0; i < len(prefix); i++ {
+		index := prefix[i] - 'a'
+		if index < 0 || index >= 26 {
+			return false
 		}
+		if cur.Children[index] == nil {
+			return false
+		}
+		cur = cur.Children[index]
 	}
-	return false
+	return true
 }
 
 func minSubArrayLen(target int, nums []int) int {
