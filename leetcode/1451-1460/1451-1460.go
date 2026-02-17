@@ -28,6 +28,8 @@ func maxDotProduct(nums1 []int, nums2 []int) int {
 
 	for i := 1; i < len(nums1); i++ {
 		for j := 1; j < len(nums2); j++ {
+			// dp[i-1][j] already include situation that nums[i-1] is multiplying with nums[j]
+			// and it's the same for dp[i][j-1]
 			dp[i][j] = max(nums1[i]*nums2[j], dp[i-1][j-1], dp[i-1][j-1]+nums1[i]*nums2[j], dp[i-1][j], dp[i][j-1])
 		}
 	}

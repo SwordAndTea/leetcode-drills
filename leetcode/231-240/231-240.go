@@ -65,6 +65,7 @@ type ListNode struct {
 	Next *ListNode
 }
 
+// leetcode problem No. 234
 func isPalindrome(head *ListNode) bool {
 	midP := head
 	p := head
@@ -75,7 +76,7 @@ func isPalindrome(head *ListNode) bool {
 
 	// do head insert at mid
 	p = midP.Next
-	midP.Next = nil
+	midP.Next = nil // necessary step to make sure after head insert, the next pointer of the original node that after mid is pointed to nil
 	for p != nil {
 		nextP := p.Next
 		p.Next = midP.Next

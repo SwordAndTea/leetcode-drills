@@ -38,6 +38,7 @@ func simplifyPath(path string) string {
 	return strings.Join([]string{"/", strings.Join(pathList, "/")}, "")
 }
 
+// leetcode problem No. 72
 func minDistance(word1 string, word2 string) int {
 	len1, len2 := len(word1), len(word2)
 	dp := make([][]int, 2)
@@ -55,14 +56,13 @@ func minDistance(word1 string, word2 string) int {
 				dp[1][j] = dp[0][j-1]
 			} else {
 				dp[1][j] = dp[0][j-1] + 1 // replace
-			}
+				if dp[0][j]+1 < dp[1][j] {
+					dp[1][j] = dp[0][j] + 1 // delete
+				}
 
-			if dp[0][j]+1 < dp[1][j] {
-				dp[1][j] = dp[0][j] + 1 // delete
-			}
-
-			if dp[1][j-1]+1 < dp[1][j] { // insert
-				dp[1][j] = dp[1][j-1] + 1
+				if dp[1][j-1]+1 < dp[1][j] { // insert
+					dp[1][j] = dp[1][j-1] + 1
+				}
 			}
 		}
 		dp[0], dp[1] = dp[1], dp[0]

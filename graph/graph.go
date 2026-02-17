@@ -4,6 +4,7 @@ import (
 	"algorithm/other"
 	"errors"
 	"math"
+	"slices"
 	"sort"
 )
 
@@ -29,7 +30,7 @@ func NewGraph(adjacencyList map[int][]*Edge) *Graph {
 //
 // The time complexity is O(V+E) and the space complexity is O(H), H is the max depth of the graph,
 // in worst case, O(V) a long chain, best case O(log V)
-func (g *Graph) DFSTravel(start int) []int {
+func (g *Graph) DFSTravel() []int {
 	visitInfo := make(map[int]bool)
 	result := make([]int, 0, len(g.AdjacencyList))
 
@@ -43,9 +44,6 @@ func (g *Graph) DFSTravel(start int) []int {
 			}
 		}
 	}
-
-	// Start from the specified vertex
-	dfsRecursive(start)
 
 	// Visit remaining unvisited vertices (for disconnected graphs)
 	for k := range g.AdjacencyList {
@@ -63,7 +61,7 @@ func (g *Graph) DFSTravel(start int) []int {
 //
 // The time complexity of BFS is O(V+E) and the space complexity is O(V)
 // (worst case: the queue holds almost all vertices, e.g., a wide graph)
-func (g *Graph) BFSTravel(start int) []int {
+func (g *Graph) BFSTravel() []int {
 	inQueued := make(map[int]bool, len(g.AdjacencyList)) // whether the node has been put into visit queue before or not
 	result := make([]int, 0, len(g.AdjacencyList))
 
@@ -85,9 +83,6 @@ func (g *Graph) BFSTravel(start int) []int {
 		}
 	}
 
-	// Start from the specified vertex
-	bfs(start)
-
 	// Visit remaining unvisited vertices (for disconnected graphs)
 	for k := range g.AdjacencyList {
 		if !inQueued[k] {
@@ -100,6 +95,7 @@ func (g *Graph) BFSTravel(start int) []int {
 
 // ShortestPathDijkstra can only handle situation when edge weights are non-negative
 // the time complexity of Dijkstra is O(V^2 + E) ≈ O(V^2), V is the number of Vertices and E is the number of Edges.
+// the V^2 comes from for each iteration, we need go through the queue to find the node with minimum distance.
 // if we use the heap to help find the vertex with minimal distance, the time complexity can be reduced to O(VlogV + E)
 func (g *Graph) ShortestPathDijkstra(start int, end int) (int, []int) {
 	visit := make(map[int]bool)
@@ -148,7 +144,7 @@ func (g *Graph) ShortestPathDijkstra(start int, end int) (int, []int) {
 			path = append(path, predecessor[curNode])
 			curNode = predecessor[curNode]
 		}
-		// TODO: reverse the path
+		slices.Reverse(path)
 		return dis, path
 	}
 
@@ -169,6 +165,7 @@ func (g *Graph) ShortestPathBellmanFord(start int, end int) (int, []int, error) 
 
 	for i := 0; i < len(g.AdjacencyList)-1; i++ { // i from 0 to number of vertices - 1
 		hasUpdate := false
+		// iterate all edges
 		for begin, endNodes := range g.AdjacencyList {
 			for _, v := range endNodes {
 				if distance[begin] != math.MaxInt && distance[v.End] > distance[begin]+v.Weight {
@@ -201,7 +198,7 @@ func (g *Graph) ShortestPathBellmanFord(start int, end int) (int, []int, error) 
 			path = append(path, predecessor[curNode])
 			curNode = predecessor[curNode]
 		}
-		// TODO: reverse the path
+		slices.Reverse(path)
 		return dis, path, nil
 	}
 
@@ -258,7 +255,7 @@ func (g *Graph) ShortestPathSPFA(start int, end int) (int, []int, error) {
 			path = append(path, predecessor[curNode])
 			curNode = predecessor[curNode]
 		}
-		// TODO: reverse the path
+		slices.Reverse(path)
 		return dis, path, nil
 	}
 
@@ -323,6 +320,7 @@ func (g *Graph) MinimumSpinningTreePrime() (int /*total weight of the spinning t
 		for _, edge := range g.AdjacencyList[curNode] {
 			if !visit[edge.End] {
 				// use curNode as bridge, update the distance of node to the current spinning tree
+				// here is the difference with Dijkstra, there is no addition between edge.Weight and distance[curNode]
 				if dis, ok := distance[edge.End]; !ok || dis > edge.Weight {
 					distance[edge.End] = edge.Weight
 					predecessor[edge.End] = curNode
@@ -438,8 +436,8 @@ func (g *Graph) TopologicalSort() ([]int, error) {
 // the node in the critical path means the earliest time to start activity on that node
 // is equal to the latest time to start activity on that node
 //
-// For the AOV graph, if we now the time to complete the activity on that node, we can transform the graph
-// into a AOE graph by duplicate the vertices, and for each pair of duplicated vertices, assign the weight on that
+// For the AOV graph, if we know the time to complete the activity on that node, we can transform the graph
+// into an AOE graph by duplicate the vertices, and for each pair of duplicated vertices, assign the weight on that
 // edge with the weight of the original vertex. While for the original edges, assign weight with zero.
 func (g *Graph) CriticalPath() (criticalPath []int, pathLength int, err error) {
 	// Step 1: Get topological order
@@ -448,7 +446,7 @@ func (g *Graph) CriticalPath() (criticalPath []int, pathLength int, err error) {
 		return nil, -1, err
 	}
 
-	// Step 2: Calculate earliest start time (ES) for each vertex - forward pass
+	// Step 2: Calculate the earliest start time (ES) for each vertex - forward pass
 	// ES[v] = max(ES[u] + weight(u,v)) for all edges (u,v) entering v
 	es := make(map[int]int)
 	for _, v := range topoOrder {
