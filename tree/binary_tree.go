@@ -330,9 +330,9 @@ func NewHeap[T Number](values []T, isMaxHeap bool) *Heap[T] {
 func (h *Heap[T]) RemoveTop() T {
 	length := len(h.Nodes)
 	top := h.Nodes[0]
-	h.Nodes[0] = h.Nodes[length-1]
+	h.Nodes[0] = h.Nodes[length-1] // move the last element to the front
 	h.Nodes = h.Nodes[0 : length-1]
-	h.downAdjust(0)
+	h.downAdjust(0) // down adjust the last element (which moved to the front)
 	return top
 }
 
@@ -349,26 +349,18 @@ func (h *Heap[T]) RemoveValueOnce(v T) {
 		_ = h.RemoveTop()
 		return
 	}
-	h.Nodes[removeIndex] = h.Nodes[length-1]
+	h.Nodes[removeIndex] = h.Nodes[length-1] // move the last element to the remove index
 	h.Nodes = h.Nodes[0 : length-1]
 	fatherIndex := (removeIndex - 1) / 2
 	if h.IsMaxHeap {
 		if h.Nodes[removeIndex] > h.Nodes[fatherIndex] {
-			for removeIndex > 0 && h.Nodes[removeIndex] > h.Nodes[fatherIndex] {
-				h.Nodes[removeIndex], h.Nodes[fatherIndex] = h.Nodes[fatherIndex], h.Nodes[removeIndex] // swap
-				removeIndex = fatherIndex
-				fatherIndex = (removeIndex - 1) / 2
-			}
+			h.upAdjust(removeIndex)
 		} else {
 			h.downAdjust(removeIndex)
 		}
 	} else {
 		if h.Nodes[removeIndex] < h.Nodes[fatherIndex] {
-			for removeIndex > 0 && h.Nodes[removeIndex] < h.Nodes[fatherIndex] {
-				h.Nodes[removeIndex], h.Nodes[fatherIndex] = h.Nodes[fatherIndex], h.Nodes[removeIndex] // swap
-				removeIndex = fatherIndex
-				fatherIndex = (removeIndex - 1) / 2
-			}
+			h.upAdjust(removeIndex)
 		} else {
 			h.downAdjust(removeIndex)
 		}

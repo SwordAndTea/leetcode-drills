@@ -5,7 +5,7 @@ import (
 	"unsafe"
 )
 
-// Definition for singly-linked list.
+// ListNode definition for singly-linked list.
 type ListNode struct {
 	Val  int
 	Next *ListNode
@@ -68,7 +68,7 @@ func reorderList(head *ListNode) {
 	p.Next = nil
 }
 
-// Definition for a binary tree node.
+// TreeNode definition for a binary tree node.
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
@@ -103,41 +103,54 @@ func postorderTraversal(root *TreeNode) []int {
 	return result
 }
 
+// leetcode problem No. 146
+
 type LRUCache struct {
 	Capacity int
-	Cache    map[int]*KeyValuePair
-	Head     *KeyValuePair
-	Tail     *KeyValuePair
+	Cache    map[int]*LRUCacheNode
+	Head     *LRUCacheNode
+	Tail     *LRUCacheNode
 }
 
-type KeyValuePair struct {
+// LRUCacheNode the bidirectional linked-list node of lru Cache
+type LRUCacheNode struct {
 	Key   int
 	Value int
-	Pre   *KeyValuePair
-	Next  *KeyValuePair
+	Prev  *LRUCacheNode
+	Next  *LRUCacheNode
 }
 
 func Constructor(capacity int) LRUCache {
 	lru := LRUCache{
 		Capacity: capacity,
-		Cache:    make(map[int]*KeyValuePair),
-		Head:     &KeyValuePair{},
-		Tail:     &KeyValuePair{},
+		Cache:    make(map[int]*LRUCacheNode), // don't pass capacity to the make
+		Head:     &LRUCacheNode{},
+		Tail:     &LRUCacheNode{},
 	}
 	lru.Head.Next = lru.Tail
-	lru.Tail.Pre = lru.Head
+	lru.Tail.Prev = lru.Head
 	return lru
+}
+
+func (this *LRUCache) remove(node *LRUCacheNode) {
+	nodePrev := node.Prev
+	nodeNext := node.Next
+	nodePrev.Next = nodeNext
+	nodeNext.Prev = nodePrev
+}
+
+func (this *LRUCache) addToHead(node *LRUCacheNode) {
+	headNext := this.Head.Next
+	node.Next = headNext
+	node.Prev = this.Head
+	this.Head.Next = node
+	headNext.Prev = node
 }
 
 func (this *LRUCache) Get(key int) int {
 	if v, ok := this.Cache[key]; ok {
-		v.Pre.Next = v.Next
-		v.Next.Pre = v.Pre
-
-		v.Next = this.Head.Next
-		v.Pre = this.Head
-		this.Head.Next.Pre = v
-		this.Head.Next = v
+		this.remove(v)
+		this.addToHead(v)
 		return v.Value
 	}
 	return -1
@@ -146,18 +159,17 @@ func (this *LRUCache) Get(key int) int {
 func (this *LRUCache) Put(key int, value int) {
 	if v, ok := this.Cache[key]; ok {
 		v.Value = value
-		_ = this.Get(key)
+		this.remove(v)
+		this.addToHead(v)
 	} else {
 		if len(this.Cache) == this.Capacity {
-			pre := this.Tail.Pre
-			pre.Pre.Next = this.Tail
-			this.Tail.Pre = pre.Pre
-			delete(this.Cache, pre.Key)
+			nodeToRemove := this.Tail.Prev
+			this.remove(nodeToRemove)
+			delete(this.Cache, nodeToRemove.Key)
 		}
-		newPair := &KeyValuePair{key, value, this.Head, this.Head.Next}
-		this.Head.Next.Pre = newPair
-		this.Head.Next = newPair
-		this.Cache[key] = newPair
+		newNode := &LRUCacheNode{Key: key, Value: value}
+		this.addToHead(newNode)
+		this.Cache[key] = newNode
 	}
 }
 
