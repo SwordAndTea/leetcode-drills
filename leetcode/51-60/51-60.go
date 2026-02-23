@@ -1,5 +1,7 @@
 package _51_60
 
+import "sort"
+
 func solveNQueens(n int) [][]string {
 	result := make([][]string, 0)
 
@@ -139,8 +141,8 @@ func maxSubArray(nums []int) int {
 
 	// space save version
 	dp := make([]int, 2) // dp[i] means the max subarray that end with dp[i]
-	max := nums[0]
-	dp[0] = max
+	maxValue := nums[0]
+	dp[0] = maxValue
 
 	for i := 1; i < len(nums); i++ {
 		if nums[i] < 0 {
@@ -157,13 +159,13 @@ func maxSubArray(nums []int) int {
 				dp[1] = dp[0] + nums[i]
 			}
 		}
-		if dp[1] > max {
-			max = dp[1]
+		if dp[1] > maxValue {
+			maxValue = dp[1]
 		}
 		dp[0] = dp[1]
 	}
 
-	return max
+	return maxValue
 }
 
 func spiralOrder(matrix [][]int) []int {
@@ -229,10 +231,12 @@ func canJump(nums []int) bool {
 	return true
 }
 
+// leetcode problem No. 56
+
 func merge(intervals [][]int) [][]int {
-	//sort.Slice(intervals, func(i, j int) bool {
-	//	return intervals[i][0] <= intervals[j][0]
-	//})
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] <= intervals[j][0]
+	})
 
 	writeIndex := 0
 	readIndex := 1
