@@ -50,7 +50,7 @@ func TestGraph_DFSTravel(t *testing.T) {
 	}
 
 	g := NewGraph(al)
-	r := g.DFSTravel(0)
+	r := g.DFSTravel()
 	if !slices.Equal(r, []int{0, 1, 3, 4, 5, 2}) {
 		t.Errorf("dfs travel not correct, result: %+v", r)
 	}
@@ -101,7 +101,7 @@ func TestGraph_BFSTravel(t *testing.T) {
 	}
 
 	g := NewGraph(al)
-	r := g.BFSTravel(0)
+	r := g.BFSTravel()
 
 	if !slices.Equal(r, []int{0, 1, 2, 3, 4, 5}) {
 		t.Errorf("bfs travel not correct, result: %+v", r)

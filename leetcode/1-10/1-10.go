@@ -67,7 +67,7 @@ func lengthOfLongestSubstring(s string) int {
 	//}
 	//i, j := 0, 0
 	//m := make(map[uint8]int)
-	//max := 0
+	//ans := 0
 	//c := uint8(0)
 	//isMovingJ := true
 	//for j < len(s) {
@@ -76,8 +76,8 @@ func lengthOfLongestSubstring(s string) int {
 	//		m[c] += 1
 	//		if m[c] > 1 {
 	//			isMovingJ = false
-	//			if j-i > max {
-	//				max = j - i
+	//			if j-i > ans {
+	//				ans = j - i
 	//			}
 	//		} else {
 	//			j++
@@ -92,29 +92,26 @@ func lengthOfLongestSubstring(s string) int {
 	//		i++
 	//	}
 	//}
-	//if isMovingJ && j-i > max {
-	//	max = j - i
+	//if isMovingJ && j-i > ans {
+	//	ans = j - i
 	//}
-	//return max
+	//return ans
 
 	// better solution
-	appearIndexes := make(map[int32]*int)
-	max := 0
-	start := 0
-	for i, v := range s {
-		indexP := appearIndexes[v]
-		if indexP != nil && *indexP >= start {
-			if i-start > max {
-				max = i - start
-			}
-			start = *indexP + 1
-		} else if i == len(s)-1 && i-start+1 > max {
-			max = i - start + 1
+	charIndex := make(map[rune]int)
+	startIndex := 0 // the start index of substring without duplicate characters.
+	ans := 0
+	for i, c := range s {
+		if idx, ok := charIndex[c]; ok && idx >= startIndex {
+			// ok means c is repeated, at this moment, idx points to the last repeated character
+			ans = max(ans, i-startIndex)
+			startIndex = idx + 1
+		} else if i == len(s)-1 {
+			ans = max(ans, i-startIndex+1)
 		}
-		tmp := i
-		appearIndexes[v] = &tmp
+		charIndex[c] = i
 	}
-	return max
+	return ans
 }
 
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
@@ -319,7 +316,7 @@ func isPalindrome(x int) bool {
 		return false
 	}
 
-	if x >= 0 && x <= 9 {
+	if x <= 9 {
 		return true
 	}
 

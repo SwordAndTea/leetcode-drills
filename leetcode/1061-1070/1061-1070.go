@@ -25,7 +25,7 @@ func assignBikes(workers [][]int, bikes [][]int) int {
 		}
 	}
 
-	dp[0][0] = 0
+	dp[0][0] = 0 // Note, don't modify dp[i][0] and dp[0][j]
 	for i := 1; i <= n; i++ {
 		for j := 0; j < 1<<m; j++ {
 			for k := 0; k < m; k++ { // for each bike
