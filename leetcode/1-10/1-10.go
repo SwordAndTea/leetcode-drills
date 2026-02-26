@@ -106,7 +106,7 @@ func lengthOfLongestSubstring(s string) int {
 			// ok means c is repeated, at this moment, idx points to the last repeated character
 			ans = max(ans, i-startIndex)
 			startIndex = idx + 1
-		} else if i == len(s)-1 {
+		} else {
 			ans = max(ans, i-startIndex+1)
 		}
 		charIndex[c] = i

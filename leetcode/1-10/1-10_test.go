@@ -11,3 +11,7 @@ func TestModulo(t *testing.T) {
 func TestIsMatch(t *testing.T) {
 	t.Log(isMatch("aa", "a*"))
 }
+
+func TestLengthOfLongestSubstring(t *testing.T) {
+	t.Log(lengthOfLongestSubstring("abcdd"))
+}
