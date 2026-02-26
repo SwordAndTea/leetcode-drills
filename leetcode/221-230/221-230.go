@@ -263,3 +263,103 @@ func kthSmallest(root *TreeNode, k int) int {
 	_, v := solve(root, 0)
 	return v
 }
+
+// leetcode problem No. 224
+
+func calculate(s string) int {
+	result := 0
+	numStack := []int{}
+	operatorStack := []byte{}
+	num := 0
+	lastOperator := byte('+')
+
+	for i := 0; i < len(s); i++ {
+		char := s[i]
+		if char >= '0' && char <= '9' {
+			num = num*10 + int(char-'0')
+		} else if char == '+' || char == '-' {
+			if lastOperator == '+' {
+				result += num
+			} else if lastOperator == '-' {
+				result -= num
+			}
+			num = 0
+			lastOperator = char
+		} else if char == '(' {
+			numStack = append(numStack, result)
+			operatorStack = append(operatorStack, lastOperator)
+
+			num = 0
+			result = 0
+			lastOperator = byte('+')
+		} else if char == ')' {
+			// get the final result between the pair of parentheses
+			if lastOperator == '+' {
+				result += num
+			} else if lastOperator == '-' {
+				result -= num
+			}
+
+			num = result
+			result = numStack[len(numStack)-1]
+			numStack = numStack[:len(numStack)-1]
+
+			lastOperator = operatorStack[len(operatorStack)-1]
+			operatorStack = operatorStack[:len(operatorStack)-1]
+		}
+	}
+	if lastOperator == '+' {
+		result += num
+	} else if lastOperator == '-' {
+		result -= num
+	}
+	return result
+}
+
+// leetcode problem No. 227
+
+func calculate2(s string) int {
+	result := 0
+	num := 0
+	preNum := 0
+	lastOperator := byte('+')
+	for i := 0; i < len(s); i++ {
+		char := s[i]
+		if char >= '0' && char <= '9' {
+			num = num*10 + int(char-'0')
+		} else if char != ' ' {
+			if lastOperator == '+' {
+				result += num
+				preNum = num
+				num = 0
+			} else if lastOperator == '-' {
+				result -= num
+				preNum = 0 - num
+				num = 0
+			} else if lastOperator == '*' {
+				result -= preNum
+				preNum = preNum * num
+				result += preNum
+				num = 0
+			} else if lastOperator == '/' {
+				result -= preNum
+				preNum = preNum / num
+				result += preNum
+				num = 0
+			}
+			lastOperator = char
+		}
+	}
+	if lastOperator == '+' {
+		result += num
+	} else if lastOperator == '-' {
+		result -= num
+	} else if lastOperator == '*' {
+		result -= preNum
+		result += preNum * num
+	} else if lastOperator == '/' {
+		result -= preNum
+		result += preNum / num
+	}
+	return result
+}
