@@ -63,50 +63,34 @@ func rightSideView(root *TreeNode) []int {
 	return result
 }
 
+// leetcode problem No. 200
+
 func numIslands(grid [][]byte) int {
-	m, n := len(grid), len(grid[0])
-	visit := make([][]bool, m)
-	for i := 0; i < m; i++ {
-		visit[i] = make([]bool, n)
-	}
 	ans := 0
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if grid[i][j] == '1' && !visit[i][j] {
-				ans++
-				lands := make([][2]int, 1)
-				lands[0] = [2]int{i, j}
-				visit[i][j] = true
-				k := 0
-				for k < len(lands) {
-					curIndex := lands[k]
+	m := len(grid)
+	n := len(grid[0])
+	var landToWater func(curI, curJ int)
+	landToWater = func(curI, curJ int) {
+		grid[curI][curJ] = '0'
+		if curI-1 >= 0 && grid[curI-1][curJ] == '1' {
+			landToWater(curI-1, curJ)
+		}
+		if curI+1 < m && grid[curI+1][curJ] == '1' {
+			landToWater(curI+1, curJ)
+		}
+		if curJ-1 >= 0 && grid[curI][curJ-1] == '1' {
+			landToWater(curI, curJ-1)
+		}
+		if curJ+1 < n && grid[curI][curJ+1] == '1' {
+			landToWater(curI, curJ+1)
+		}
+	}
 
-					// left
-					if curIndex[1]+1 < n && !visit[curIndex[0]][curIndex[1]+1] && grid[curIndex[0]][curIndex[1]+1] == '1' {
-						lands = append(lands, [2]int{curIndex[0], curIndex[1] + 1})
-						visit[curIndex[0]][curIndex[1]+1] = true
-					}
-
-					// right
-					if curIndex[1]-1 >= 0 && !visit[curIndex[0]][curIndex[1]-1] && grid[curIndex[0]][curIndex[1]-1] == '1' {
-						lands = append(lands, [2]int{curIndex[0], curIndex[1] - 1})
-						visit[curIndex[0]][curIndex[1]-1] = true
-					}
-
-					// down
-					if curIndex[0]+1 < m && !visit[curIndex[0]+1][curIndex[1]] && grid[curIndex[0]+1][curIndex[1]] == '1' {
-						lands = append(lands, [2]int{curIndex[0] + 1, curIndex[1]})
-						visit[curIndex[0]+1][curIndex[1]] = true
-					}
-
-					// up
-					if curIndex[0]-1 >= 0 && !visit[curIndex[0]-1][curIndex[1]] && grid[curIndex[0]-1][curIndex[1]] == '1' {
-						lands = append(lands, [2]int{curIndex[0] - 1, curIndex[1]})
-						visit[curIndex[0]-1][curIndex[1]] = true
-					}
-
-					k++
-				}
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			if grid[i][j] == '1' {
+				ans += 1
+				landToWater(i, j)
 			}
 		}
 	}
