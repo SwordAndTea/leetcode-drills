@@ -45,44 +45,35 @@ func nextPermutation(nums []int) {
 	}
 }
 
+// leetcode problem No. 32
+
 func longestValidParentheses(s string) int {
-	strLen := len(s)
-	if strLen == 0 || strLen == 1 {
-		return 0
-	}
+	n := len(s)
+	// dp[i] stands for longest ValidParentheses that ends the s[i]
+	dp := make([]int, n)
 
-	dp := make([]int, strLen) // dp[i] stands for longest ValidParentheses that ends the s[i]
-	dp[0] = 0
-	if s[0] == '(' && s[1] == ')' {
-		dp[1] = 2
-	}
-	max := dp[1]
-
-	for i := 2; i < strLen; i++ {
-		if s[i] == '(' {
-			dp[i] = 0
-		} else if s[i-1] == '(' { // s[i] == ')' and dp[i-1] is 0
-			dp[i] = dp[i-2] + 2
-			if dp[i] > max {
-				max = dp[i]
-			}
-		} else {
-			if i-dp[i-1]-1 >= 0 && s[i-dp[i-1]-1] == '(' {
-				if i-dp[i-1] >= 2 {
-					dp[i] = dp[i-1] + 2 + dp[i-dp[i-1]-2]
-				} else {
-					dp[i] = dp[i-1] + 2
-				}
-				if dp[i] > max {
-					max = dp[i]
+	ans := 0
+	for i := 1; i < n; i++ {
+		if s[i] == ')' {
+			if s[i-1] == '(' {
+				if i-2 >= 0 {
+					dp[i] = dp[i-2] + 2
 				}
 			} else {
-				dp[i] = 0
+				j := i - 1 - dp[i-1]
+				if j >= 0 && s[j] == '(' {
+					if j-1 >= 0 {
+						dp[i] = dp[j-1] + dp[i-1] + 2
+					} else {
+						dp[i] = dp[i-1] + 2
+					}
+				}
 			}
+			ans = max(ans, dp[i])
 		}
 	}
 
-	return max
+	return ans
 }
 
 // Search in Rotated Sorted Array

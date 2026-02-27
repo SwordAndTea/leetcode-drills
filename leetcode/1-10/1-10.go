@@ -2,15 +2,26 @@ package _1_10
 
 import "math"
 
+// leetcode problem No. 1
+
 func twoSum(nums []int, target int) []int {
-	for i := 0; i < len(nums); i++ {
-		for j := i + 1; j < len(nums); j++ {
-			if nums[i]+nums[j] == target {
-				return []int{i, j}
+	numIndex := make(map[int][]int)
+	for i, v := range nums {
+		numIndex[v] = append(numIndex[v], i)
+	}
+	for num, indices := range numIndex {
+		if target-num == num {
+			if len(indices) >= 2 {
+				return indices[0:2]
 			}
+		} else if otherIndices, ok := numIndex[target-num]; ok {
+			if otherIndices[0] < indices[0] {
+				return []int{otherIndices[0], indices[0]}
+			}
+			return []int{indices[0], otherIndices[0]}
 		}
 	}
-	return []int{}
+	return nil
 }
 
 type ListNode struct {
@@ -340,7 +351,8 @@ func isPalindrome(x int) bool {
 	return true
 }
 
-// Regular Expression Matching
+// leetcode problem No. 10
+
 func isMatch(s string, p string) bool {
 	if p == ".*" {
 		return true
@@ -357,21 +369,22 @@ func isMatch(s string, p string) bool {
 
 	for j := 1; j < len(p)+1; j++ {
 		if p[j-1] == '*' { // p[0] will not be *, so there j must be grater than 2
+			// and because the source string is empty, the .* or char* can only match zero char
 			dp[0][j] = dp[0][j-2]
-		} else {
-			dp[0][j] = false
 		}
 	}
 
 	for i := 1; i < len(s)+1; i++ {
 		for j := 1; j < len(p)+1; j++ {
-			if p[j-1] == '*' {
-				dp[i][j] = dp[i][j-2]
-				if p[j-2] == '.' || s[i-1] == p[j-2] {
-					dp[i][j] = dp[i][j] || dp[i-1][j]
-				}
-			} else if p[j-1] == '.' || s[i-1] == p[j-1] {
+			if p[j-1] == '.' || s[i-1] == p[j-1] {
 				dp[i][j] = dp[i-1][j-1]
+			} else if p[j-1] == '*' {
+				dp[i][j] = dp[i][j-2] // if .* or char* match zero char
+				if j > 1 {
+					if p[j-2] == '.' || s[i-1] == p[j-2] { // if .* or char* can match one or more char
+						dp[i][j] = dp[i][j] || dp[i-1][j]
+					}
+				}
 			} else {
 				dp[i][j] = false
 			}
