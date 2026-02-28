@@ -278,6 +278,8 @@ func combine(n int, k int) [][]int {
 	return result
 }
 
+// leetcode problem No. 78
+
 func subsets(nums []int) [][]int {
 	result := make([][]int, 2)
 	result[0] = []int{}

@@ -360,6 +360,8 @@ func combinationSum(candidates []int, target int) [][]int {
 	return result
 }
 
+// leetcode problem No. 40
+
 func combinationSum2(candidates []int, target int) [][]int {
 	sort.Ints(candidates)
 	result := make([][]int, 0)

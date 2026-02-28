@@ -18,6 +18,8 @@ func max(a, b int) int {
 	return b
 }
 
+// leetcode problem No. 198
+
 func rob(nums []int) int {
 	n := len(nums)
 	if n == 1 {
