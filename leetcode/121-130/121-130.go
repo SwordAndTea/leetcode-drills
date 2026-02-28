@@ -15,13 +15,6 @@ func maxProfit(prices []int) int {
 	return maxProfitV
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func maxProfit2(prices []int) int {
 	maxProfitV := 0
 	for i := 1; i < len(prices); i++ {
@@ -236,31 +229,26 @@ func ladderLength(beginWord string, endWord string, wordList []string) int {
 	return 0
 }
 
+// leetcode problem No. 128
+
 func longestConsecutive(nums []int) int {
-	numInfo := make(map[int]bool)
+	numsMap := make(map[int]bool)
 	for _, num := range nums {
-		numInfo[num] = true
+		numsMap[num] = true
 	}
-	sequenceLength := make(map[int]int)
-	maxLength := 0
-	for num, _ := range numInfo {
-		curLength := 1
-		next := num + 1
-		for numInfo[next] {
-			if sequenceLength[next] != 0 {
-				curLength += sequenceLength[next]
-				break
-			} else {
+	ans := 0
+	for num, _ := range numsMap {
+		if !numsMap[num-1] { // if num is the start of a sequence
+			count := 1
+			next := num + 1
+			for numsMap[next] {
+				count++
 				next++
-				curLength++
 			}
-		}
-		sequenceLength[num] = curLength
-		if curLength > maxLength {
-			maxLength = curLength
+			ans = max(ans, count)
 		}
 	}
-	return maxLength
+	return ans
 }
 
 func sumNumbers(root *TreeNode) int {

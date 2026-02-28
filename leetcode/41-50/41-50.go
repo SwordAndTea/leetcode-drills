@@ -225,6 +225,8 @@ func rotate(matrix [][]int) {
 	}
 }
 
+// leetcode problem No. 49
+
 func groupAnagrams(strs []string) [][]string {
 	to26 := func(str string) [26]uint8 {
 		result := [26]uint8{}
