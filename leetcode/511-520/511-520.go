@@ -6,6 +6,8 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+// leetcode problem No. 515
+
 func largestValues(root *TreeNode) []int {
 	if root == nil {
 		return []int{}
@@ -31,4 +33,22 @@ func largestValues(root *TreeNode) []int {
 		}
 	}
 	return result
+}
+
+// leetcode problem No. 518
+
+func change(amount int, coins []int) int {
+	dp := make([]int, amount+1)
+	dp[0] = 1
+
+	// for each coin, dp[i] represent the number of ways to form i-amount
+	// by only use that coin and the coins before that coin
+	// this can prevent redundant calculation
+	// if we put the inner loop to the outside, there will be redundant calculation
+	for _, coin := range coins {
+		for i := coin; i <= amount; i++ {
+			dp[i] += dp[i-coin]
+		}
+	}
+	return dp[amount]
 }

@@ -7,58 +7,31 @@ import (
 
 // leetcode problem No. 221
 func maximalSquare(matrix [][]byte) int {
-	m, n := len(matrix), len(matrix[0])
-
-	heights := make([]int, n)
-	left := make([]int, n)
-	right := make([]int, n)
-	for j := 0; j < n; j++ {
-		right[j] = n
-	}
-
-	theMax := 0
+	m := len(matrix)
+	n := len(matrix[0])
+	dp := make([][]int, m)
+	ans := 0
 	for i := 0; i < m; i++ {
-		leftest := 0
-		rightest := n - 1
-		for j := 0; j < n; j++ {
+		dp[i] = make([]int, n)
+		dp[i][0] = int(matrix[i][0]-'0') & 1
+		ans = max(ans, dp[i][0])
+	}
+	for j := 1; j < n; j++ {
+		dp[0][j] = int(matrix[0][j]-'0') & 1
+		ans = max(ans, dp[0][j])
+	}
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
 			if matrix[i][j] == '1' {
-				heights[j]++
-
-				if leftest > left[j] {
-					left[j] = leftest
+				dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+				if dp[i][j] > ans {
+					ans = dp[i][j]
 				}
-			} else {
-				heights[j] = 0
-
-				left[j] = 0
-				leftest = j + 1
-			}
-
-			if matrix[i][n-1-j] == '1' {
-				if rightest < right[n-1-j] {
-					right[n-1-j] = rightest
-				}
-			} else {
-				right[n-1-j] = n
-				rightest = n - 1 - j - 1
-			}
-
-		}
-
-		area := 0
-		for j := 0; j < n; j++ {
-			if v := right[j] - left[j] + 1; v < heights[j] {
-				area = v * v
-			} else {
-				area = heights[j] * heights[j]
-			}
-			if area > theMax {
-				theMax = area
 			}
 		}
 	}
 
-	return theMax
+	return ans * ans
 }
 
 type TreeNode struct {
@@ -85,20 +58,6 @@ func countNodes(root *TreeNode) int {
 	} else { // right subtree is a full binary tree
 		return int(math.Pow(2, float64(rightDepth))) + countNodes(root.Left)
 	}
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }
 
 func computeArea(ax1 int, ay1 int, ax2 int, ay2 int,
