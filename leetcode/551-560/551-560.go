@@ -27,7 +27,8 @@ func subarraySum(nums []int, k int) int {
 	ans := 0
 	for _, num := range nums {
 		sum += num
-		if count, ok := prefixSumCount[sum-k]; ok {
+		if count, ok := prefixSumCount[sum-k]; ok { // must calculate the ans here, not another loop
+			// cuz it will sure it's the sum of the subarray
 			ans += count
 		}
 		prefixSumCount[sum]++
