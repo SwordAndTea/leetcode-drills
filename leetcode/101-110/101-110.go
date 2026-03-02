@@ -1,5 +1,7 @@
 package _101_110
 
+import "slices"
+
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
@@ -70,6 +72,8 @@ func isSymmetric(root *TreeNode) bool {
 	return judge(root.Left, root.Right)
 }
 
+// leetcode problem No. 102
+
 func levelOrder(root *TreeNode) [][]int {
 	result := make([][]int, 0)
 	if root == nil {
@@ -96,44 +100,38 @@ func levelOrder(root *TreeNode) [][]int {
 	return result
 }
 
-func zigzagLevelOrder(root *TreeNode) [][]int {
-	result := make([][]int, 0)
-	if root == nil {
-		return result
-	}
-	nodes := make([]*TreeNode, 0, 4)
-	nodes = append(nodes, root)
-	curP, topP := 0, 0
-	leftToRight := true
-	for curP <= topP {
-		levelNodes := make([]int, 0, topP-curP+1)
-		p1, p2 := curP, topP
-		for p2 >= p1 {
-			levelNodes = append(levelNodes, nodes[p2].Val)
-			if leftToRight {
-				if nodes[p2].Left != nil {
-					nodes = append(nodes, nodes[p2].Left)
-				}
-				if nodes[p2].Right != nil {
-					nodes = append(nodes, nodes[p2].Right)
-				}
-			} else {
-				if nodes[p2].Right != nil {
-					nodes = append(nodes, nodes[p2].Right)
-				}
-				if nodes[p2].Left != nil {
-					nodes = append(nodes, nodes[p2].Left)
-				}
-			}
+// leetcode problem No. 103
 
-			p2--
-		}
-		result = append(result, levelNodes)
-		curP = topP + 1
-		topP = len(nodes) - 1
-		leftToRight = !leftToRight
+func zigzagLevelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return nil
 	}
-	return result
+	ans := [][]int{}
+	q := []*TreeNode{}
+	q = append(q, root)
+	levelIndex := 0
+	for len(q) > 0 {
+		level := []int{}
+		levelIndex++
+		for i := len(q); i > 0; i-- {
+			cur := q[0]
+			q = q[1:]
+			level = append(level, cur.Val)
+			if cur.Left != nil {
+				q = append(q, cur.Left)
+			}
+			if cur.Right != nil {
+				q = append(q, cur.Right)
+			}
+		}
+		if levelIndex%2 == 1 {
+			ans = append(ans, level)
+		} else {
+			slices.Reverse(level)
+			ans = append(ans, level)
+		}
+	}
+	return ans
 }
 
 func max(a, b int) int {
