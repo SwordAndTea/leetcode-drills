@@ -6,20 +6,6 @@ import (
 	"strings"
 )
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b int) int {
-	if a > b {
-		return b
-	}
-	return a
-}
-
 func abs(a int) int {
 	if a >= 0 {
 		return a
@@ -86,6 +72,8 @@ func maximumGap(nums []int) int {
 	maxGap = max(maxGap, maxV-prev)
 	return maxGap
 }
+
+// leetcode problem No. 165
 
 func compareVersion(version1 string, version2 string) int {
 	versionStrList1 := strings.Split(version1, ".")

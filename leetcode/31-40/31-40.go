@@ -1,9 +1,12 @@
 package _31_40
 
 import (
+	"slices"
 	"sort"
 	"strconv"
 )
+
+// leetcode problem No. 31
 
 func nextPermutation(nums []int) {
 	if len(nums) == 1 {
@@ -14,35 +17,23 @@ func nextPermutation(nums []int) {
 	}
 
 	// find the beginning of last ascending sequence
-	i := len(nums) - 1
-	for ; i > 0 && nums[i-1] >= nums[i]; i-- {
+	i := len(nums) - 2
+	for i >= 0 && nums[i] >= nums[i+1] {
+		i--
 	}
 
 	if i == 0 {
-		// reverse
-		for m, n := 0, len(nums)-1; m < n; {
-			nums[m], nums[n] = nums[n], nums[m]
-			m++
-			n--
-		}
+		slices.Reverse(nums)
 		return
 	}
 
 	j := i - 1
-
-	for i = len(nums) - 1; i > j; i-- {
-		if nums[i] > nums[j] {
-			break
-		}
+	for j > i && nums[j] <= nums[i] {
+		j++
 	}
 
 	nums[i], nums[j] = nums[j], nums[i]
-	// reverse nums[j + 1: len(nums)]
-	for m, n := j+1, len(nums)-1; m < n; {
-		nums[m], nums[n] = nums[n], nums[m]
-		m++
-		n--
-	}
+	slices.Reverse(nums[j+1:])
 }
 
 // leetcode problem No. 32
