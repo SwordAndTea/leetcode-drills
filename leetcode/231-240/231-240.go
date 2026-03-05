@@ -182,3 +182,23 @@ func productExceptSelf(nums []int) []int {
 	}
 	return result
 }
+
+// leetcode problem No. 240
+
+func searchMatrix(matrix [][]int, target int) bool {
+	m := len(matrix)
+	n := len(matrix[0])
+	row, col := 0, n-1
+
+	for col >= 0 && row < m {
+		if target == matrix[row][col] {
+			return true
+		}
+		if target > matrix[row][col] {
+			row++
+		} else {
+			col--
+		}
+	}
+	return false
+}
