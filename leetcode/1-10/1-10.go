@@ -29,46 +29,43 @@ type ListNode struct {
 	Next *ListNode
 }
 
-func addTwoNumbersImpl(l1 *ListNode, l2 *ListNode, more int) *ListNode {
-	if l1 != nil && l2 != nil {
-		l1.Val = l1.Val + l2.Val + more
-		more = l1.Val / 10
-		l1.Val = l1.Val % 10
-		next := addTwoNumbersImpl(l1.Next, l2.Next, more)
-		l1.Next = next
-		return l1
-	} else if l1 != nil {
-		l1.Val = l1.Val + more
-		more = l1.Val / 10
-		l1.Val = l1.Val % 10
-		if more > 0 {
-			next := addTwoNumbersImpl(l1.Next, l2, more)
-			l1.Next = next
-		}
-		return l1
-	} else if l2 != nil {
-		l2.Val = l2.Val + more
-		more = l2.Val / 10
-		l2.Val = l2.Val % 10
-		if more > 0 {
-			next := addTwoNumbersImpl(l1, l2.Next, more)
-			l2.Next = next
-		}
-		return l2
-	} else {
-		if more != 0 {
-			newNode := &ListNode{
-				Val:  more,
-				Next: nil,
-			}
-			return newNode
-		}
-		return nil
-	}
-}
+// leetcode problem No. 2
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
-	return addTwoNumbersImpl(l1, l2, 0)
+	tmpHead := &ListNode{}
+	remain := 0
+	cur := tmpHead
+	val := 0
+	for l1 != nil && l2 != nil {
+		val = l1.Val + l2.Val + remain
+		remain = val / 10
+		val = val % 10
+		cur.Next = &ListNode{Val: val}
+		cur = cur.Next
+		l1 = l1.Next
+		l2 = l2.Next
+	}
+
+	for l1 != nil {
+		val = l1.Val + remain
+		remain = val / 10
+		val = val % 10
+		cur.Next = &ListNode{Val: val}
+		cur = cur.Next
+		l1 = l1.Next
+	}
+	for l2 != nil {
+		val = l2.Val + remain
+		remain = val / 10
+		val = val % 10
+		cur.Next = &ListNode{Val: val}
+		cur = cur.Next
+		l2 = l2.Next
+	}
+	if remain != 0 {
+		cur.Next = &ListNode{Val: remain}
+	}
+	return tmpHead.Next
 }
 
 // 3. Longest Substring Without Repeating Characters
@@ -182,38 +179,32 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	return 0
 }
 
+// leetcode problem No. 5
+
 func longestPalindrome(s string) string {
-	strLen := len(s)
-	if strLen == 1 {
-		return s
+	n := len(s)
+	dp := make([][]bool, n)
+	maxLen := 1
+	ans := s[0:1]
+	for i := 0; i < n; i++ {
+		dp[i] = make([]bool, n)
+		dp[i][i] = true
 	}
 
-	dp := make([]bool, strLen)
-	maxStart, maxEnd := strLen-1, strLen-1
-	j := strLen - 1
-	for i := strLen - 2; i >= 0; i-- {
-		j = strLen - 1
-		for ; j >= i+2; j-- {
-			if s[i] == s[j] && dp[j-1] {
-				dp[j] = true
-				if j-i > maxEnd-maxStart {
-					maxStart, maxEnd = i, j
+	for end := 1; end < n; end++ {
+		for start := end - 1; start >= 0; start-- {
+			if s[start] == s[end] {
+				if end-start == 1 || dp[start+1][end-1] {
+					dp[start][end] = true
+					if end-start+1 > maxLen {
+						maxLen = end - start
+						ans = s[start : end+1]
+					}
 				}
-			} else {
-				dp[j] = false
 			}
 		}
-		dp[j] = false // now j = i+1
-		if s[i] == s[j] {
-			dp[j] = true
-			if 1 > maxEnd-maxStart {
-				maxStart, maxEnd = i, j
-			}
-		}
-		dp[i] = true
 	}
-
-	return s[maxStart : maxEnd+1]
+	return ans
 }
 
 // Zigzag Conversion

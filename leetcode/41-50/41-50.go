@@ -254,39 +254,28 @@ func groupAnagrams(strs []string) [][]string {
 	return result
 }
 
+// leetcode problem No. 50
+
 func myPow(x float64, n int) float64 {
-	if n == 0 {
-		return 1
-	}
-	powMap := make(map[int64]float64)
-	nn := int64(n)
+	isNegative := false
 	if n < 0 {
-		nn = -nn
+		isNegative = true
+		n = -n
 	}
-	result := float64(1)
-	pow := int64(2)
-	cur := x
-	for nn > 1 {
-		if pow > nn {
-			pow = 2
-			cur = x
+	ans := 1.0
+	for n > 0 {
+		cur := x
+		base := 1
+		for base*2 <= n {
+			cur = cur * cur
+			base *= 2
 		}
-		if powMap[pow] == 0 {
-			cur *= cur
-			powMap[pow] = cur
-		}
-		result *= powMap[pow]
-		nn -= pow
-		pow *= 2
+		ans *= cur
+		n -= base
 	}
 
-	if nn == 1 {
-		result *= x
+	if isNegative {
+		return 1 / ans
 	}
-
-	if n < 0 {
-		return 1 / result
-	}
-
-	return result
+	return ans
 }

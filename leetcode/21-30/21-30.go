@@ -1,14 +1,18 @@
 package _21_30
 
 import (
-	"algorithm/leetcode/1-10"
 	"math"
 )
 
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
 // merge two sorted lists
-func mergeTwoLists(list1 *__10.ListNode, list2 *__10.ListNode) *__10.ListNode {
+func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
 	p1, p2 := list1, list2
-	head := &__10.ListNode{
+	head := &ListNode{
 		Val:  0,
 		Next: nil,
 	}
@@ -80,7 +84,7 @@ func generateParenthesis(n int) []string {
 		r2 := generateParenthesis(n - i)
 		for _, v1 := range r1 {
 			for _, v2 := range r2 {
-				newStr := string(append([]byte(v1), []byte(v2)...))
+				newStr := v1 + v2
 				if !resultStored[newStr] {
 					newResult = append(newResult, newStr)
 					resultStored[newStr] = true
@@ -93,28 +97,32 @@ func generateParenthesis(n int) []string {
 	return newResult
 }
 
-// Merge k Sorted Lists
-func mergeKListImpl(lists []*__10.ListNode, start, end int) *__10.ListNode {
-	if start == end {
-		return lists[start]
-	}
-	mid := (start + end) / 2
-	left := mergeKListImpl(lists, start, mid)
-	right := mergeKListImpl(lists, mid+1, end)
+// leetcode problem No. 23
 
-	return mergeTwoLists(left, right)
-}
-
-func mergeKLists(lists []*__10.ListNode) *__10.ListNode {
+func mergeKLists(lists []*ListNode) *ListNode {
 	length := len(lists)
 	if length == 0 {
 		return nil
 	}
-	return mergeKListImpl(lists, 0, length-1)
+	var recursive func(left, right int) *ListNode
+
+	recursive = func(left, right int) *ListNode {
+		if left == right {
+			return lists[left]
+		}
+
+		mid := left + (right-left)/2
+		mergedLeft := recursive(left, mid)
+		mergedRight := recursive(mid+1, right)
+
+		return mergeTwoLists(mergedLeft, mergedRight)
+	}
+
+	return recursive(0, length-1)
 }
 
 // Swap Nodes in Pairs
-func swapPairs(head *__10.ListNode) *__10.ListNode {
+func swapPairs(head *ListNode) *ListNode {
 	if head == nil {
 		return nil
 	}
@@ -125,7 +133,7 @@ func swapPairs(head *__10.ListNode) *__10.ListNode {
 
 	p1 := head
 	head = head.Next
-	pre := &__10.ListNode{
+	pre := &ListNode{
 		Val:  0,
 		Next: nil,
 	}
@@ -142,15 +150,15 @@ func swapPairs(head *__10.ListNode) *__10.ListNode {
 }
 
 // Reverse Nodes in k-Group
-func reverseKGroup(head *__10.ListNode, k int) *__10.ListNode {
+func reverseKGroup(head *ListNode, k int) *ListNode {
 	if k == 1 {
 		return head
 	}
 
-	stack := make([]*__10.ListNode, k)
+	stack := make([]*ListNode, k)
 	top := -1
 
-	pre := &__10.ListNode{
+	pre := &ListNode{
 		Val:  0,
 		Next: nil,
 	}
