@@ -215,20 +215,21 @@ func spiralOrder(matrix [][]int) []int {
 	return result
 }
 
-func canJump(nums []int) bool {
-	furthestJumpCount := 0
-	for i, v := range nums {
-		furthestJumpCount--
-		if v == 0 && furthestJumpCount <= 0 && i != len(nums)-1 {
-			return false
-		}
+// leetcode problem No. 55
 
-		if v > furthestJumpCount {
-			furthestJumpCount = v
+func canJump(nums []int) bool {
+	n := len(nums)
+	dp := make([]bool, n)
+	dp[n-1] = true
+	for i := n - 2; i >= 0; i-- {
+		for j := i + 1; j <= i+nums[i] && j < n; j++ {
+			if dp[j] {
+				dp[i] = true
+				break
+			}
 		}
 	}
-
-	return true
+	return dp[0]
 }
 
 // leetcode problem No. 56

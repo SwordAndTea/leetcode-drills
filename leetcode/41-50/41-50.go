@@ -1,5 +1,7 @@
 package _41_50
 
+import "math"
+
 func firstMissingPositive(nums []int) int {
 	numsLen := len(nums)
 	i := 0
@@ -130,29 +132,23 @@ func isMatch(s string, p string) bool {
 	return dp[len(s)][len(p)]
 }
 
+// leetcode problem No. 45
+
 func jump(nums []int) int {
-	if len(nums) == 1 {
-		return 0
+	n := len(nums)
+	dp := make([]int, n)
+	for i := range dp {
+		dp[i] = math.MaxInt
 	}
-	step := 0
-	for i := 0; i < len(nums); {
-		j := nums[i]
-		if i+j >= len(nums)-1 {
-			return step + 1
-		}
-		max := 0
-		maxIndex := i
-		for k := i + 1; k <= i+j; k++ {
-			if k+nums[k] > max {
-				max = nums[k] + k
-				maxIndex = k
+	dp[n-1] = 0
+	for i := n - 2; i >= 0; i-- {
+		for j := i + 1; j <= i+nums[i] && j < n; j++ {
+			if dp[j] != math.MaxInt {
+				dp[i] = min(dp[i], dp[j]+1)
 			}
 		}
-		i = maxIndex
-		step++
 	}
-
-	return step
+	return dp[0]
 }
 
 func permute(nums []int) [][]int {

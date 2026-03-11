@@ -65,3 +65,35 @@ func boundaryOfBinaryTree(root *TreeNode) []int {
 	slices.Reverse(rightB)
 	return slices.Concat([]int{root.Val}, leftBoundary(root), leaves(root), rightB)
 }
+
+// leetcode problem No. 547
+
+func findCircleNum(isConnected [][]int) int {
+	n := len(isConnected)
+
+	visited := make([]bool, n)
+
+	bfs := func(start int) {
+		queue := []int{start}
+		visited[start] = true
+		for len(queue) > 0 {
+			curNode := queue[0]
+			queue = queue[1:]
+			for j := 0; j < n; j++ {
+				if isConnected[curNode][j] == 1 && !visited[j] {
+					queue = append(queue, j)
+					visited[j] = true
+				}
+			}
+		}
+	}
+	ans := 0
+	for i := 0; i < n; i++ {
+		if !visited[i] {
+			ans++
+			bfs(i)
+		}
+	}
+
+	return ans
+}
