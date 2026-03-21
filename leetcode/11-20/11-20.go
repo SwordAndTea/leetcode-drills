@@ -1,7 +1,6 @@
 package _11_20
 
 import (
-	"algorithm/leetcode/1-10"
 	"math"
 	"sort"
 )
@@ -9,7 +8,7 @@ import (
 // Container With Most Water
 func maxArea(height []int) int {
 	left, right := 0, len(height)-1
-	max := 0
+	maxV := 0
 	area := 0
 	for left < right {
 		if height[left] < height[right] {
@@ -20,11 +19,11 @@ func maxArea(height []int) int {
 			right--
 		}
 
-		if area > max {
-			max = area
+		if area > maxV {
+			maxV = area
 		}
 	}
-	return max
+	return maxV
 }
 
 // Integer to Roman
@@ -147,7 +146,7 @@ func romanToInt(s string) int {
 	return result
 }
 
-// Longest Common Prefix
+// leetcode problem No. 14
 
 func commonPrefix(s1, s2 string) string {
 	i := 0
@@ -401,9 +400,14 @@ func fourSum(nums []int, target int) [][]int {
 
 //Remove Nth Node From End of List
 
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
 // Definition for singly-linked list.
-func removeNthFromEnd(head *__10.ListNode, n int) *__10.ListNode {
-	nodes := make([]*__10.ListNode, 30)
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	nodes := make([]*ListNode, 30)
 	h := head
 	top := -1
 	for h != nil {

@@ -2,40 +2,31 @@ package _91_100
 
 import "strings"
 
+// leetcode problem No. 91
+
 func numDecodings(s string) int {
-	if s[0] == '0' {
-		return 0
+	n := len(s)
+	dp := make([]int, n+1)
+	dp[n] = 1
+	if s[n-1] != '0' {
+		dp[n-1] = 1
 	}
-	dp := make([]int, len(s)+1) // num of decodings from (s[0], s[i])
-	dp[0] = 1
-	dp[1] = 1
-	if s[0] == '0' {
-		dp[1] = 0
-	}
-
-	for i := 2; i <= len(s); i++ {
-		if s[i-1] == '0' {
-			if s[i-2] == '1' || s[i-2] == '2' {
-				dp[i] = dp[i-2]
-			} else {
-				dp[i] = 0
-			}
-		} else if s[i-1] <= '6' {
-			if s[i-2] == '1' || s[i-2] == '2' {
-				dp[i] = dp[i-1] + dp[i-2]
-			} else {
-				dp[i] = dp[i-1]
-			}
-		} else {
-			if s[i-2] == '1' {
-				dp[i] = dp[i-1] + dp[i-2]
-			} else {
-				dp[i] = dp[i-1]
-			}
+	num := s[n-1] - '1' + 1
+	for i := n - 2; i >= 0; i-- {
+		if s[i] == '0' {
+			dp[i] = 0
+			num = 0
+			continue
 		}
+		dp[i] = dp[i+1]
+		num = (s[i]-'1'+1)*10 + num
+		if num >= 1 && num <= 26 {
+			dp[i] += dp[i+2]
+		}
+		num = num / 10
 	}
 
-	return dp[len(s)]
+	return dp[0]
 }
 
 type ListNode struct {

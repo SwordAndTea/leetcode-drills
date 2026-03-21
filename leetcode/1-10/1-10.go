@@ -313,6 +313,8 @@ func myAtoi(s string) int {
 	return int(result)
 }
 
+// leetcode problem No. 9
+
 func isPalindrome(x int) bool {
 	if x < 0 {
 		return false
