@@ -26,46 +26,22 @@ func firstMissingPositive(nums []int) int {
 // leetcode problem No. 42
 
 func trap(height []int) int {
-	// for each wall, find the another wall that can trap the water with
-
-	n := len(height)
-	i := 0
-	sum := 0
-	//scan from begin to end;
-	for i < n {
-		base := height[i]
-		k := i + 1
-		for k < n && height[k] < base { // if the height descending to the end, means current *i* points to the highest wall
-			k++
-		}
-		if k == n {
-			break
-		}
-		i++
-		for i < k {
-			sum += base - height[i]
-			i++
+	// there is a common solution for this kind of problem, see the leetcode problem No. 407
+	left := 0
+	right := len(height) - 1
+	ans := 0
+	for left < right-1 {
+		if height[left] < height[right] {
+			ans += max(height[left]-height[left+1], 0)
+			height[left+1] = max(height[left], height[left+1])
+			left++
+		} else {
+			ans += max(height[right]-height[right-1], 0)
+			height[right-1] = max(height[right], height[right-1])
+			right--
 		}
 	}
-
-	// scan end to begin
-	j := n - 1
-	for j > i {
-		base := height[j]
-		k := j - 1
-		for k >= i && height[k] < base {
-			k--
-		}
-		if k < i {
-			break
-		}
-		j--
-		for j > k {
-			sum += base - height[j]
-			j--
-		}
-	}
-	return sum
+	return ans
 }
 
 func multiply(num1 string, num2 string) string {

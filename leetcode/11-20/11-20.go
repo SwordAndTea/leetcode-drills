@@ -82,68 +82,61 @@ func intToRoman(num int) string {
 	return string(result)
 }
 
-// Roman to Integer
+// leetcode problem No. 13
+
 func romanToInt(s string) int {
-	var lookupMap = map[string]int{
-		"I":    1,
-		"II":   2,
-		"III":  3,
-		"IV":   4,
-		"V":    5,
-		"VI":   6,
-		"VII":  7,
-		"VIII": 8,
-		"IX":   9,
-		"X":    10,
-		"XX":   20,
-		"XXX":  30,
-		"XL":   40,
-		"L":    50,
-		"LX":   60,
-		"LXX":  70,
-		"LXXX": 80,
-		"XC":   90,
-		"C":    100,
-		"CC":   200,
-		"CCC":  300,
-		"CD":   400,
-		"D":    500,
-		"DC":   600,
-		"DCC":  700,
-		"DCCC": 800,
-		"CM":   900,
-		"M":    1000,
-		"MM":   2000,
-		"MMM":  3000,
-	}
-
-	var priorityMap = map[uint8]int{
-		'I': 1,
-		'V': 5,
-		'X': 10,
-		'L': 50,
-		'C': 100,
-		'D': 500,
-		'M': 1000,
-	}
-
-	result := 0
-	for i := 0; i < len(s); {
-		j := i
-		basePri := priorityMap[s[i]]
-		for i < len(s) && priorityMap[s[i]] == basePri {
-			i++
-		}
-		if i == len(s) {
-			result += lookupMap[s[j:i]]
-		} else if priorityMap[s[i]] > basePri {
-			i++
-			result += lookupMap[s[j:i]]
-		} else {
-			result += lookupMap[s[j:i]]
+	ans := 0
+	i := 0
+	n := len(s)
+	for i < n {
+		if s[i] == 'I' {
+			if i+1 < n && s[i+1] == 'V' {
+				ans += 4
+				i += 2
+			} else if i+1 < n && s[i+1] == 'X' {
+				ans += 9
+				i += 2
+			} else {
+				ans += 1
+				i += 1
+			}
+		} else if s[i] == 'V' {
+			ans += 5
+			i += 1
+		} else if s[i] == 'X' {
+			if i+1 < n && s[i+1] == 'L' {
+				ans += 40
+				i += 2
+			} else if i+1 < n && s[i+1] == 'C' {
+				ans += 90
+				i += 2
+			} else {
+				ans += 10
+				i += 1
+			}
+		} else if s[i] == 'L' {
+			ans += 50
+			i += 1
+		} else if s[i] == 'C' {
+			if i+1 < n && s[i+1] == 'D' {
+				ans += 400
+				i += 2
+			} else if i+1 < n && s[i+1] == 'M' {
+				ans += 900
+				i += 2
+			} else {
+				ans += 100
+				i += 1
+			}
+		} else if s[i] == 'D' {
+			ans += 500
+			i += 1
+		} else if s[i] == 'M' {
+			ans += 1000
+			i += 1
 		}
 	}
-	return result
+	return ans
 }
 
 // leetcode problem No. 14
