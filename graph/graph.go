@@ -24,13 +24,13 @@ func NewGraph(adjacencyList map[int][]*Edge) *Graph {
 	}
 }
 
-// DFSTravel performs depth-first search traversal starting from the specified vertex.
+// DFSTraverse performs depth-first search traversal starting from the specified vertex.
 // The start parameter is required because Go map iteration order is non-deterministic,
 // which would cause inconsistent traversal results if we iterate over AdjacencyList to pick a starting vertex.
 //
 // The time complexity is O(V+E) and the space complexity is O(H), H is the max depth of the graph,
 // in worst case, O(V) a long chain, best case O(log V)
-func (g *Graph) DFSTravel() []int {
+func (g *Graph) DFSTraverse() []int {
 	visitInfo := make(map[int]bool)
 	result := make([]int, 0, len(g.AdjacencyList))
 
@@ -55,29 +55,29 @@ func (g *Graph) DFSTravel() []int {
 	return result
 }
 
-// BFSTravel performs breadth-first search traversal starting from the specified vertex.
+// BFSTraverse performs breadth-first search traversal starting from the specified vertex.
 // The start parameter is required because Go map iteration order is non-deterministic,
 // which would cause inconsistent traversal results if we iterate over AdjacencyList to pick a starting vertex.
 //
 // The time complexity of BFS is O(V+E) and the space complexity is O(V)
 // (worst case: the queue holds almost all vertices, e.g., a wide graph)
-func (g *Graph) BFSTravel() []int {
-	inQueued := make(map[int]bool, len(g.AdjacencyList)) // whether the node has been put into visit queue before or not
+func (g *Graph) BFSTraverse() []int {
+	enQueued := make(map[int]bool, len(g.AdjacencyList)) // whether the node has been put into visit queue before or not
 	result := make([]int, 0, len(g.AdjacencyList))
 
 	var bfs func(vertex int)
 	bfs = func(vertex int) {
 		queue := []int{vertex}
-		inQueued[vertex] = true
+		enQueued[vertex] = true
 		i := 0
 		for i < len(queue) {
 			curVertex := queue[i]
 			result = append(result, curVertex)
 			i++
 			for _, v := range g.AdjacencyList[curVertex] {
-				if !inQueued[v.End] {
+				if !enQueued[v.End] {
 					queue = append(queue, v.End)
-					inQueued[v.End] = true
+					enQueued[v.End] = true
 				}
 			}
 		}
@@ -85,7 +85,7 @@ func (g *Graph) BFSTravel() []int {
 
 	// Visit remaining unvisited vertices (for disconnected graphs)
 	for k := range g.AdjacencyList {
-		if !inQueued[k] {
+		if !enQueued[k] {
 			bfs(k)
 		}
 	}
