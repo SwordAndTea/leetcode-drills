@@ -107,8 +107,9 @@ func (g *Graph) ShortestPathDijkstra(start int, end int) (int, []int) {
 	predecessor := make(map[int]int)
 	predecessor[start] = start
 
-	curNode := start
-	for {
+	curNode := start    // the node has the min distance that not yet closed
+	hasNextNode := true // has next node with min distance yet not closed
+	for hasNextNode {
 		visit[curNode] = true
 		for _, edge := range g.AdjacencyList[curNode] {
 			if !visit[edge.End] {
@@ -121,17 +122,13 @@ func (g *Graph) ShortestPathDijkstra(start int, end int) (int, []int) {
 
 		// TODO: maybe use a heap to manage this, but we may need to create new struct that contains both vertex and distance
 		minV := math.MaxInt
-		hasNewNode := false
+		hasNextNode = false
 		for vertex, dis := range distance {
 			if !visit[vertex] && dis < minV {
 				minV = dis
 				curNode = vertex
-				hasNewNode = true
+				hasNextNode = true
 			}
-		}
-
-		if !hasNewNode {
-			break
 		}
 	}
 
@@ -453,19 +450,16 @@ func (g *Graph) CriticalPath() (criticalPath []int, pathLength int, err error) {
 		es[v] = 0
 	}
 
+	maxES := 0
 	for _, u := range topoOrder {
 		for _, edge := range g.AdjacencyList[u] {
-			if es[u]+edge.Weight > es[edge.End] {
-				es[edge.End] = es[u] + edge.Weight
+			if v := es[u] + edge.Weight; v > es[edge.End] {
+				es[edge.End] = v
+				// Find the maximum ES value (this is the critical path length)
+				if v > maxES {
+					maxES = v
+				}
 			}
-		}
-	}
-
-	// Find the maximum ES value (this is the critical path length)
-	maxES := 0
-	for _, e := range es {
-		if e > maxES {
-			maxES = e
 		}
 	}
 
