@@ -110,6 +110,7 @@ func SelectMostIntervals(intervals []*Interval) []*Interval {
 	return result
 }
 
+// BinarySearch input is sorted in ascending order
 func BinarySearch(input []int, target int) int {
 	left, right := 0, len(input)-1
 	for left <= right {
@@ -366,39 +367,42 @@ func getNext(s string) []int {
 	if len(s) == 0 {
 		return nil
 	}
+	// next[i] array means for the substring s[0:i(included)], the max index k (k < i, cannot equal i) that s[0:k(include)] == s[i-k, i(include)]
 	next := make([]int, len(s))
-	next[0] = 0
+	next[0] = -1
 	for i := 1; i < len(s); i++ {
 		j := next[i-1]
-		for j != 0 && s[i] != s[j] {
-			j = next[j-1]
+		for j != -1 && s[i] != s[j+1] {
+			j = next[j]
 		}
 
-		if s[i] == s[j] {
+		if s[i] == s[j+1] {
 			next[i] = j + 1
 		} else {
-			next[i] = j // j is 0
+			next[i] = j // j is -1
 		}
 	}
 	return next
 }
 
+// KMP the time complexity of KMP is O(m+n)
 func KMP(text, pattern string) int {
 	patternNext := getNext(pattern)
-	i, j := 0, 0
+	i := 0
+	j := -1
 	count := 0
 	for i < len(text) {
-		if text[i] == pattern[j] {
+		if text[i] == pattern[j+1] {
 			i++
 			j++
 			if j == len(pattern) {
 				count++
-				j = 0
+				j = -1
 			}
-		} else if j == 0 {
+		} else if j == -1 {
 			i++
 		} else {
-			j = patternNext[j-1]
+			j = patternNext[j]
 		}
 	}
 	return count
