@@ -67,6 +67,67 @@ func topKFrequent(words []string, k int) []string {
 	// remain a heap with max k element, dynamically push or pop into that heap
 }
 
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+// leetcode problem No. 694
+func numDistinctIslands(grid [][]int) int {
+	islandHash := func(islandCells [][2]int) int {
+		minX, minY := math.MaxInt32, math.MaxInt32
+		for _, islandCell := range islandCells {
+			if islandCell[0] < minX {
+				minX = islandCell[0]
+			}
+			if islandCell[1] < minY {
+				minY = islandCell[1]
+			}
+		}
+		ans := 0
+		for _, islandCell := range islandCells {
+			ans += islandCell[0] - minX + islandCell[1] - minY
+		}
+		return ans
+	}
+
+	m, n := len(grid), len(grid[0])
+	islands := make(map[int]int)
+	step := []int{-1, 0, 1, 0, -1}
+	bfs := func(x, y int) {
+		queue := [][2]int{{x, y}}
+		k := 0
+		for k < len(queue) {
+			cur := queue[k]
+			k++
+			for i := 0; i < len(step)-1; i++ {
+				xx := cur[0] + step[i]
+				yy := cur[1] + step[i+1]
+
+				if xx >= 0 && xx < m && yy >= 0 && yy < n && grid[xx][yy] == 1 {
+					queue = append(queue, [2]int{xx, yy})
+					grid[xx][yy] = 0 // mark grid[xx][yy] as visited
+				}
+			}
+		}
+		hashV := islandHash(queue)
+		if _, ok := islands[hashV]; !ok {
+			islands[hashV] = 1
+		}
+	}
+
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] == 1 {
+				bfs(i, j)
+			}
+		}
+	}
+	return len(islands)
+}
+
 // leetcode problem No. 696
 
 func countBinarySubstrings(s string) int {
