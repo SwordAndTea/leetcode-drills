@@ -104,20 +104,18 @@ type TreeNode struct {
 
 // leetcode problem No. 235, Lowest Common Ancestor of a Binary Search Tree
 func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
-	if p.Val == root.Val {
-		return p
-	}
-	if q.Val == root.Val {
-		return q
-	}
-
-	if (p.Val < root.Val && q.Val > root.Val) || (p.Val > root.Val && q.Val < root.Val) {
+	if root == p || root == q {
 		return root
 	}
 
-	if p.Val < root.Val && q.Val < root.Val {
+	if (p.Val-root.Val)*(q.Val-root.Val) < 0 { // p and q are on the different side of root
+		return root
+	}
+
+	if p.Val < root.Val { // p and q are on the left side of the root
 		return lowestCommonAncestor(root.Left, p, q)
 	}
+	// p and q are on the left side of the root
 	return lowestCommonAncestor(root.Right, p, q)
 }
 

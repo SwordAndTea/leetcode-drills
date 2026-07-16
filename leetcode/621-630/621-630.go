@@ -14,7 +14,7 @@ func (h *MaxHeap) Len() int {
 }
 
 func (h *MaxHeap) Less(i, j int) bool {
-	return (*h)[i] > (*h)[j]
+	return (*h)[i] > (*h)[j] // since it's max heap, use >
 }
 
 func (h *MaxHeap) Swap(i, j int) {
@@ -42,7 +42,7 @@ func scheduleCourse(courses [][]int) int {
 
 	for _, course := range courses {
 		heap.Push(maxHeap, course[0])
-		endingDay += course[0]
+		endingDay += course[0] // if taking this course, what the ending day will be
 
 		if endingDay > course[1] { // if the ending day extend the deadline
 			endingDay -= heap.Pop(maxHeap).(int) // not choose the course with max duration
