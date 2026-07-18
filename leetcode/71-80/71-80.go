@@ -222,33 +222,23 @@ func minWindow(s string, t string) string {
 	return minString
 }
 
+// leetcode problem No. 77
 func combine(n int, k int) [][]int {
-	combinationValue := func(n, m int) int {
-		res := 1
-		for i := 1; i <= m; i++ {
-			res = res * (n - m + i) / i
-		}
-		return res
-	}
-
-	result := make([][]int, 0, combinationValue(n, k))
-
-	var doCombine func(start int, current []int)
-
-	doCombine = func(start int, current []int) {
-		if len(current) == k {
-			newRes := make([]int, k)
-			copy(newRes, current)
-			result = append(result, newRes)
+	result := make([][]int, 0)
+	var backtracking func(int, []int)
+	backtracking = func(start int, curNums []int) {
+		if len(curNums) == k {
+			tmp := make([]int, k)
+			copy(tmp, curNums)
+			result = append(result, tmp)
 			return
 		}
-		for i := start; i <= n; i++ {
-			doCombine(i+1, append(current, i))
+		for i := start + 1; i <= n; i++ {
+			backtracking(i, append(curNums, i))
 		}
 	}
 
-	doCombine(1, []int{})
-
+	backtracking(0, []int{})
 	return result
 }
 

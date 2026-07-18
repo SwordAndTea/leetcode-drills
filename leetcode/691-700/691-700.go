@@ -3,7 +3,6 @@ package _691_700
 import (
 	"container/heap"
 	"math"
-	"sort"
 )
 
 // leetcode problem No. 692
@@ -211,7 +210,6 @@ func findShortestSubArray(nums []int) int {
 }
 
 // leetcode problem No. 698
-
 func canPartitionKSubsets(nums []int, k int) bool {
 	n := len(nums)
 	sum := 0
@@ -230,13 +228,10 @@ func canPartitionKSubsets(nums []int, k int) bool {
 		return false
 	}
 
-	sort.Slice(nums, func(i, j int) bool {
-		return nums[i] > nums[j]
-	})
-
 	visited := make([]bool, n)
-	var backtracking func(startIndex, curSum, remainK int) bool
 
+	// since each set is like a combination, so we use a startIndex to cut search branch
+	var backtracking func(startIndex, curSum, remainK int) bool
 	backtracking = func(startIndex, curSum, remainK int) bool {
 		if curSum == target {
 			if remainK == 1 {
