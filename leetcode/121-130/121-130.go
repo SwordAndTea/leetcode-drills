@@ -149,8 +149,9 @@ func isWordLadder(w1, w2 string) bool {
 	return diff == 1
 }
 
+// leetcode problem No. 126
 func findLadders(beginWord string, endWord string, wordList []string) [][]string {
-	distanceMap := make(map[string]int)
+	distanceMap := make(map[string]int) // distance map indicate the level distance to the beginWord by ladder
 	distanceMap[beginWord] = 0
 	queue := make([]string, 1)
 	queue[0] = beginWord
@@ -187,6 +188,7 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 		for _, w := range wordList {
 			if _, ok := distanceMap[w]; ok && isWordLadder(curWord, w) &&
 				distanceMap[curWord] == distanceMap[w]+1 { // must be reachable word and the word next to curWord
+				// this will help cut search branch
 				dfs(append(curList, w))
 			}
 		}
@@ -197,7 +199,6 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 }
 
 // leetcode problem No. 127
-
 func ladderLength(beginWord string, endWord string, wordList []string) int {
 	ladderMap := make(map[string][]string)
 	for _, w := range wordList {
@@ -232,7 +233,6 @@ func ladderLength(beginWord string, endWord string, wordList []string) int {
 }
 
 // leetcode problem No. 128
-
 func longestConsecutive(nums []int) int {
 	numsMap := make(map[int]bool)
 	for _, num := range nums {
