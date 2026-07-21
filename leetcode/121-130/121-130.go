@@ -253,23 +253,24 @@ func longestConsecutive(nums []int) int {
 	return ans
 }
 
+// leetcode problem No. 129
 func sumNumbers(root *TreeNode) int {
 	total := 0
-	var solve func(node *TreeNode, cur int)
-	solve = func(node *TreeNode, cur int) {
+	var recursive func(node *TreeNode, cur int)
+	recursive = func(node *TreeNode, cur int) {
 		cur = cur*10 + node.Val
 		if node.Left == nil && node.Right == nil { // leaf node
 			total += cur
 			return
 		}
 		if node.Left != nil {
-			solve(node.Left, cur)
+			recursive(node.Left, cur)
 		}
 		if node.Right != nil {
-			solve(node.Right, cur)
+			recursive(node.Right, cur)
 		}
 	}
-	solve(root, 0)
+	recursive(root, 0)
 	return total
 }
 

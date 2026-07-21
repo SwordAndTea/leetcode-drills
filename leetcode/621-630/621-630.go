@@ -5,6 +5,62 @@ import (
 	"sort"
 )
 
+// leetcode problem No. 622
+type MyCircularQueue struct {
+	buffer []int
+	head   int
+	rear   int
+	k      int
+}
+
+func Constructor(k int) MyCircularQueue {
+	return MyCircularQueue{
+		buffer: make([]int, k+1), // one redundant space
+		head:   0,
+		rear:   0, // rear point to place to insert value
+		k:      k, // the actual useful size
+	}
+}
+
+func (this *MyCircularQueue) EnQueue(value int) bool {
+	if this.IsFull() {
+		return false
+	}
+	this.buffer[this.rear] = value
+	this.rear = (this.rear + 1) % (this.k + 1)
+	return true
+}
+
+func (this *MyCircularQueue) DeQueue() bool {
+	if this.IsEmpty() {
+		return false
+	}
+	this.head = (this.head + 1) % (this.k + 1)
+	return true
+}
+
+func (this *MyCircularQueue) Front() int {
+	if this.IsEmpty() {
+		return -1
+	}
+	return this.buffer[this.head]
+}
+
+func (this *MyCircularQueue) Rear() int {
+	if this.IsEmpty() {
+		return -1
+	}
+	return this.buffer[this.k+this.rear%(this.k+1)]
+}
+
+func (this *MyCircularQueue) IsEmpty() bool {
+	return this.head == this.rear
+}
+
+func (this *MyCircularQueue) IsFull() bool {
+	return (this.rear+1)%(this.k+1) == this.head
+}
+
 // leetcode problem No. 630
 
 type MaxHeap []int

@@ -8,31 +8,29 @@ type ListNode struct {
 // leetcode problem No. 1171
 
 func removeZeroSumSublists(head *ListNode) *ListNode {
-	dummy := &ListNode{
-		Next: head,
-	}
+	prefixSumInfo := make(map[int]*ListNode)
+	dummyHead := &ListNode{}
+	dummyHead.Next = head
+	prefixSumInfo[0] = dummyHead
 
 	cur := head
 	prefixSum := 0
-	prefixSumMap := map[int]*ListNode{}
-	prefixSumMap[0] = dummy
-
 	for cur != nil {
 		prefixSum += cur.Val
-		if node, ok := prefixSumMap[prefixSum]; ok {
-			nodeToDelete := node.Next
-			sumToNodeToDelete := prefixSum
-			for nodeToDelete != cur { // mark node to cur as deleted
+		if previousEqualNode := prefixSumInfo[prefixSum]; previousEqualNode != nil {
+			nodeToDelete := previousEqualNode.Next
+			sumToNodeToDelete := prefixSum // note how to calculate the prefix sum of node after previousEqualNode
+			for nodeToDelete != cur {
 				sumToNodeToDelete += nodeToDelete.Val
-				delete(prefixSumMap, sumToNodeToDelete) // important
+				delete(prefixSumInfo, sumToNodeToDelete)
 				nodeToDelete = nodeToDelete.Next
 			}
-			node.Next = cur.Next
+			previousEqualNode.Next = cur.Next
 		} else {
-			prefixSumMap[prefixSum] = cur
+			prefixSumInfo[prefixSum] = cur
 		}
 		cur = cur.Next
 	}
 
-	return dummy.Next
+	return dummyHead.Next
 }
