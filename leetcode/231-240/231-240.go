@@ -182,10 +182,15 @@ func productExceptSelf(nums []int) []int {
 }
 
 // leetcode problem No. 240
-
 func searchMatrix(matrix [][]int, target int) bool {
 	m := len(matrix)
 	n := len(matrix[0])
+	// note: why we choose matrix[0][n-1] as start, because the value flow is like this:
+	// →→→→→→→
+	//       ↓
+	//       ↓
+	//       ↓
+	//       ↓
 	row, col := 0, n-1
 
 	for col >= 0 && row < m {

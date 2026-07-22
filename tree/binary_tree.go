@@ -146,7 +146,7 @@ func bstDeleteImpl[T Number](node **Node[T], data T) {
 			}
 			// use predecessor to replace the node
 			(*node).Data = curNode.Data
-			parent.Right = curNode.Left
+			parent.Right = curNode.Left // curNode.Left might still have node
 		} else { // (*node).Right != nil, find the successor
 			parent := *node
 			curNode := (*node).Right
@@ -156,7 +156,7 @@ func bstDeleteImpl[T Number](node **Node[T], data T) {
 			}
 			// use successor to replace the node
 			(*node).Data = data
-			parent.Left = curNode.Right
+			parent.Left = curNode.Right // curNode.Right might still have node
 		}
 	} else if (*node).Data > data {
 		bstDeleteImpl(&(*node).Left, data)

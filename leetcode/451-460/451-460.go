@@ -3,14 +3,14 @@ package _451_460
 // leetcode problem No. 460
 
 type LFUCacheNode struct {
-	key        int
-	value      int
-	prev       *LFUCacheNode
-	next       *LFUCacheNode
-	useCounter int
+	key   int
+	value int
+	prev  *LFUCacheNode
+	next  *LFUCacheNode
+	freq  int // frequency of current node
 }
 
-type LRUList struct { // basically represent a LRU
+type LRUList struct { // basically represent an LRU
 	head *LFUCacheNode
 	tail *LFUCacheNode
 	size int
@@ -42,62 +42,62 @@ func (lru *LRUList) addToHead(node *LFUCacheNode) {
 }
 
 type LFUCache struct {
-	nodeMap       map[int]*LFUCacheNode
-	lruMap        map[int] /*use counter*/ *LRUList
-	capacity      int
-	minUseCounter int
+	nodeByKey    map[int]*LFUCacheNode
+	lruByFreq    map[int] /*frequency*/ *LRUList
+	capacity     int
+	minFrequency int // this is used to fast local the lru list to delete node in put
 }
 
 func Constructor(capacity int) LFUCache {
 	return LFUCache{
-		nodeMap:       make(map[int]*LFUCacheNode),
-		lruMap:        make(map[int]*LRUList),
-		capacity:      capacity,
-		minUseCounter: 0,
+		nodeByKey:    make(map[int]*LFUCacheNode),
+		lruByFreq:    make(map[int]*LRUList),
+		capacity:     capacity,
+		minFrequency: 0,
 	}
 }
 
 func (this *LFUCache) Get(key int) int {
-	if node, ok := this.nodeMap[key]; ok {
-		lruCache := this.lruMap[node.useCounter]
+	if node, ok := this.nodeByKey[key]; ok {
+		lruCache := this.lruByFreq[node.freq]
 		lruCache.remove(node)
-		if lruCache.size == 0 && this.minUseCounter == node.useCounter { // NOTE: this.minUseCounter == node.useCounter is necessary
-			this.minUseCounter++
+		if lruCache.size == 0 && this.minFrequency == node.freq { // NOTE: this.minUseCounter == node.useCounter is necessary
+			this.minFrequency++
 		}
 
-		node.useCounter++
-		lruCache = this.lruMap[node.useCounter]
+		node.freq++
+		lruCache = this.lruByFreq[node.freq]
 		if lruCache == nil {
 			lruCache = makeLRUList()
 		}
 		lruCache.addToHead(node)
-		this.lruMap[node.useCounter] = lruCache
+		this.lruByFreq[node.freq] = lruCache
 		return node.value
 	}
 	return -1
 }
 
 func (this *LFUCache) Put(key int, value int) {
-	if node, ok := this.nodeMap[key]; ok {
+	if node, ok := this.nodeByKey[key]; ok {
 		node.value = value
 		this.Get(key)
 		return
 	}
 
-	if len(this.nodeMap) == this.capacity {
-		lruCache := this.lruMap[this.minUseCounter]
+	if len(this.nodeByKey) == this.capacity {
+		lruCache := this.lruByFreq[this.minFrequency]
 		nodeToRemove := lruCache.tail.prev
 		lruCache.remove(nodeToRemove)
-		delete(this.nodeMap, nodeToRemove.key)
+		delete(this.nodeByKey, nodeToRemove.key)
 	}
 
-	newNode := &LFUCacheNode{key: key, value: value, useCounter: 1}
-	lruCache := this.lruMap[1]
+	newNode := &LFUCacheNode{key: key, value: value, freq: 1}
+	lruCache := this.lruByFreq[1]
 	if lruCache == nil {
 		lruCache = makeLRUList()
 	}
 	lruCache.addToHead(newNode)
-	this.lruMap[1] = lruCache
-	this.nodeMap[key] = newNode
-	this.minUseCounter = 1
+	this.lruByFreq[1] = lruCache
+	this.nodeByKey[key] = newNode
+	this.minFrequency = 1
 }

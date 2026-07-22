@@ -54,7 +54,7 @@ func topKFrequent(words []string, k int) []string {
 			wordFreqMap[word] = newWf
 		}
 	}
-	heap.Init(&wordFreqList)
+	heap.Init(&wordFreqList) // the time complexity of init heap is O(n)
 	result := make([]string, 0, k)
 	for i := 0; i < k; i++ {
 		wf := heap.Pop(&wordFreqList).(*WordFrequent)
@@ -63,7 +63,7 @@ func topKFrequent(words []string, k int) []string {
 	return result
 
 	// Follow-up: Could you solve it in O(n log(k)) time and O(n) extra space?
-	// remain a heap with max k element, dynamically push or pop into that heap
+	// remain a min heap (note: it's a mean heap) with max k element, dynamically push or pop into that heap
 }
 
 func abs(x int) int {

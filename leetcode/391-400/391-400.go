@@ -1,39 +1,36 @@
 package _391_400
 
 import (
-	"slices"
 	"strings"
 )
 
 // leetcode problem No. 394
-
 func decodeString(s string) string {
-	num := 0
-	var strInBracket []byte
-
-	strStack := []string{}
 	numStack := []int{}
+	strStack := []string{}
+	ans := ""
+	curNum := 0
 
 	for i := 0; i < len(s); i++ {
-		c := s[i]
-		if c >= '0' && c <= '9' {
-			num = num*10 + int(c-'0')
-		} else if c == '[' {
-			numStack = append(numStack, num)
-			strStack = append(strStack, string(strInBracket))
-			num = 0
-			strInBracket = []byte{}
-		} else if c >= 'a' && c <= 'z' {
-			strInBracket = append(strInBracket, c)
-		} else if c == ']' {
+		if s[i] >= '0' && s[i] <= '9' {
+			curNum = curNum*10 + int(s[i]-'0')
+		} else if s[i] == '[' {
+			numStack = append(numStack, curNum)
+			strStack = append(strStack, ans)
+			ans = ""
+			curNum = 0
+		} else if s[i] == ']' {
+			preAns := strStack[len(strStack)-1]
+			strStack = strStack[:len(strStack)-1]
+
 			preNum := numStack[len(numStack)-1]
 			numStack = numStack[:len(numStack)-1]
 
-			preStrInBracket := []byte(strStack[len(strStack)-1])
-			strStack = strStack[:len(strStack)-1]
-
-			strInBracket = slices.Concat(preStrInBracket, []byte(strings.Repeat(string(strInBracket), preNum)))
+			ans = preAns + strings.Repeat(ans, preNum)
+		} else {
+			ans += string(s[i])
 		}
 	}
-	return string(strInBracket)
+
+	return ans
 }

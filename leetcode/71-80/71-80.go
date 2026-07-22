@@ -100,27 +100,26 @@ func setZeroes(matrix [][]int) {
 }
 
 // leetcode problem No. 74
-
 func searchMatrix(matrix [][]int, target int) bool {
-	m := len(matrix)
-	n := len(matrix[0])
-	left1, right1 := 0, m-1
-	left2, right2 := 0, n-1
-
-	for left1 <= right1 && left2 <= right2 {
-		mid1 := left1 + (right1-left1)/2
-		mid2 := left2 + (right2-left2)/2
-
-		if matrix[mid1][mid2] == target {
+	m, n := len(matrix), len(matrix[0])
+	rowLeft, rowRight := 0, m-1
+	colLeft, colRight := 0, n-1
+	for rowLeft <= rowRight && colLeft <= colRight {
+		midRow := (rowLeft + rowRight) / 2
+		midCol := (colLeft + colRight) / 2
+		if matrix[midRow][midCol] == target {
 			return true
-		} else if matrix[mid1][0] <= target && target < matrix[mid1][mid2] {
-			right2 = mid2 - 1
-		} else if matrix[mid1][mid2] < target && target <= matrix[mid1][n-1] {
-			left2 = mid2 + 1
-		} else if matrix[mid1][0] > target {
-			right1 = mid1 - 1
-		} else { // target > matrix[mid1][n-1]
-			left1 = mid1 + 1
+		}
+		if target > matrix[midRow][n-1] {
+			rowLeft = midRow + 1
+		} else if target < matrix[midRow][0] {
+			rowRight = midRow - 1
+		} else { // matrix[midRow][0] <= target <= matrix[midRow][n-1], we located the row
+			if target > matrix[midRow][midCol] {
+				colLeft = midCol + 1
+			} else {
+				colRight = midCol - 1
+			}
 		}
 	}
 
@@ -172,7 +171,6 @@ func sortColors(nums []int) {
 }
 
 // leetcode problem No. 76
-
 func minWindow(s string, t string) string {
 	if len(s) < len(t) {
 		return ""
@@ -243,7 +241,6 @@ func combine(n int, k int) [][]int {
 }
 
 // leetcode problem No. 78
-
 func subsets(nums []int) [][]int {
 	result := make([][]int, 2)
 	result[0] = []int{}

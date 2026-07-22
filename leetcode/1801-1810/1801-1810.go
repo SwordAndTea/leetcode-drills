@@ -1,11 +1,7 @@
 package _1801_1810
 
 // leetcode problem No. 1802
-
 func maxValue(n int, index int, maxSum int) int {
-	leftSum := (index + 1) * index / 2            // sum of left to pad
-	rightSum := (n - 1 - index) * (n - index) / 2 // sum right to pad
-
 	sum := func(value int) int {
 		ans := 0
 		startIndex := max(0, index-value+1)
@@ -28,7 +24,7 @@ func maxValue(n int, index int, maxSum int) int {
 		return ans
 	}
 
-	right := (leftSum + rightSum + maxSum) / n
+	right := maxSum
 	left := 1
 
 	for left <= right {

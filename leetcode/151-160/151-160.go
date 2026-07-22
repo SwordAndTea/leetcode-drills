@@ -126,9 +126,10 @@ func findMin2(nums []int) int {
 	return nums[0]
 }
 
+// leetcode problem No.155
 type StackNode struct {
 	Val  int
-	Min  int
+	Min  int // Min stores the min value from current node to the end
 	Next *StackNode
 }
 
