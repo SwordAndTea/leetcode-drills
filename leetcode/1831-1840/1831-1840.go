@@ -1,49 +1,32 @@
 package _1831_1840
 
 // leetcode problem No. 1839
+var vowelOrder = map[rune]int{
+	'a': 1,
+	'e': 2,
+	'i': 3,
+	'o': 4,
+	'u': 5,
+}
 
 func longestBeautifulSubstring(word string) int {
+	left := -1
 	ans := 0
-	i := 0
-	for i < len(word) {
-		if word[i] == 'a' {
-			preChar := byte('a')
-			j := i + 1
-			for j < len(word) {
-				shouldBreak := false
-				switch word[j] {
-				case 'a':
-					if preChar != 'a' {
-						shouldBreak = true
-					}
-				case 'e':
-					if preChar != 'e' && preChar != 'a' {
-						shouldBreak = true
-					}
-				case 'i':
-					if preChar != 'i' && preChar != 'e' {
-						shouldBreak = true
-					}
-				case 'o':
-					if preChar != 'o' && preChar != 'i' {
-						shouldBreak = true
-					}
-				case 'u':
-					if preChar != 'u' && preChar != 'o' {
-						shouldBreak = true
-					} else {
-						ans = max(ans, j-i+1)
-					}
-				}
-				if shouldBreak {
-					break
-				}
-				preChar = word[j]
-				j++
+	lastOrder := 0
+	for i, c := range word {
+		if order, ok := vowelOrder[c]; ok && (order == lastOrder || order-lastOrder == 1) {
+			if order == 5 {
+				ans = max(ans, i-left)
 			}
-			i = j
+			lastOrder = order
 		} else {
-			i++
+			if c == 'a' {
+				left = i - 1
+				lastOrder = 1
+			} else {
+				left = i
+				lastOrder = 0
+			}
 		}
 	}
 	return ans

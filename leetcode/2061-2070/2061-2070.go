@@ -1,27 +1,28 @@
 package _2061_2070
 
 // leetcode problem No. 2062
-
 func countVowelSubstrings(word string) int {
-	vowelCharIndex := map[byte]int{
+	// record the last appear index of vowel char, it serves as the right indicator of two pointer solution
+	vowelCharIndex := map[rune]int{
 		'a': -1,
 		'e': -1,
 		'i': -1,
 		'o': -1,
 		'u': -1,
 	}
-	vowelSubstringStartIndex := -1 // actually the index before the start
+
+	validSubStringStartIndex := -1 // it serves as the left indicator of the two pointer solution
 	ans := 0
-	for i := 0; i < len(word); i++ {
-		if _, ok := vowelCharIndex[word[i]]; ok { // word[i] is vowel char
-			vowelCharIndex[word[i]] = i
-			m := i // m indicates the smallest window with all 5 vowels
+	for i, c := range word {
+		if _, ok := vowelCharIndex[c]; ok {
+			vowelCharIndex[c] = i
+			minIndexOfVowelChar := i // the min last appear index of vowel char
 			for _, index := range vowelCharIndex {
-				m = min(m, index)
+				minIndexOfVowelChar = min(minIndexOfVowelChar, index)
 			}
-			ans += max(0, m-vowelSubstringStartIndex)
+			ans += max(0, minIndexOfVowelChar-validSubStringStartIndex)
 		} else {
-			vowelSubstringStartIndex = i
+			validSubStringStartIndex = i
 		}
 	}
 	return ans

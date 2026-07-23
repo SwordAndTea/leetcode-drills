@@ -106,18 +106,22 @@ func lengthOfLongestSubstring(s string) int {
 	//return ans
 
 	// better solution
-	charIndex := make(map[rune]int)
-	startIndex := 0 // the start index of substring without duplicate characters.
-	ans := 0
+	if len(s) == 0 {
+		return 0
+	}
+	lastIndex := make(map[rune]int) // record the last appear index
+	ans := 1
+	start := 0 // the start index of the substring, serves as left
 	for i, c := range s {
-		if idx, ok := charIndex[c]; ok && idx >= startIndex {
+		if idx, ok := lastIndex[c]; ok && idx >= start {
 			// ok means c is repeated, at this moment, idx points to the last repeated character
-			ans = max(ans, i-startIndex)
-			startIndex = idx + 1
+			// if idx < start, it means the repetition of current char is before the start substring, so it should not consider as repeated
+			ans = max(ans, i-start)
+			start = idx + 1 // move the next char to avoid duplication
 		} else {
-			ans = max(ans, i-startIndex+1)
+			ans = max(ans, i-start+1)
 		}
-		charIndex[c] = i
+		lastIndex[c] = i
 	}
 	return ans
 }
