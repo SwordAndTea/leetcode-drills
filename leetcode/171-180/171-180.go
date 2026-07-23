@@ -84,6 +84,7 @@ func (this *BSTIterator) HasNext() bool {
 	return len(this.NodeStack) != 0
 }
 
+// leetcode problem No. 174
 func calculateMinimumHP(dungeon [][]int) int {
 	m := len(dungeon)
 	n := len(dungeon[0])
@@ -96,8 +97,8 @@ func calculateMinimumHP(dungeon [][]int) int {
 			hp[i][j] = math.MaxInt
 		}
 	}
-	hp[m][n-1] = 1
-	hp[m-1][n] = 1
+	hp[m][n-1] = 1 // the left cell besize the bottom right cell should at least 1 health
+	hp[m-1][n] = 1 // the upper cell above the bottom right cell should at least 1 health
 	for i := m - 1; i >= 0; i-- {
 		for j := n - 1; j >= 0; j-- {
 			need := min(hp[i+1][j], hp[i][j+1]) - dungeon[i][j]

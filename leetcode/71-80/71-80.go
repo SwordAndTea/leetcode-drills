@@ -40,35 +40,26 @@ func simplifyPath(path string) string {
 
 // leetcode problem No. 72
 func minDistance(word1 string, word2 string) int {
-	len1, len2 := len(word1), len(word2)
-	dp := make([][]int, 2)
-	dp[0] = make([]int, len2+1)
-	dp[1] = make([]int, len2+1)
-
-	for j := 0; j <= len2; j++ {
+	m, n := len(word1), len(word2)
+	dp := make([][]int, m+1)
+	for i := 0; i <= m; i++ {
+		dp[i] = make([]int, n+1)
+		dp[i][0] = i
+	}
+	for j := 1; j <= n; j++ {
 		dp[0][j] = j
 	}
 
-	for i := 1; i <= len1; i++ {
-		dp[1][0] = i
-		for j := 1; j <= len2; j++ {
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
 			if word1[i-1] == word2[j-1] {
-				dp[1][j] = dp[0][j-1]
+				dp[i][j] = dp[i-1][j-1]
 			} else {
-				dp[1][j] = dp[0][j-1] + 1 // replace
-				if dp[0][j]+1 < dp[1][j] {
-					dp[1][j] = dp[0][j] + 1 // delete
-				}
-
-				if dp[1][j-1]+1 < dp[1][j] { // insert
-					dp[1][j] = dp[1][j-1] + 1
-				}
+				dp[i][j] = min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1]) + 1
 			}
 		}
-		dp[0], dp[1] = dp[1], dp[0]
 	}
-
-	return dp[0][len2]
+	return dp[m][n]
 }
 
 func setZeroes(matrix [][]int) {
