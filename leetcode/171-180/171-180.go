@@ -1,7 +1,6 @@
 package _171_180
 
 import (
-	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -86,30 +85,46 @@ func (this *BSTIterator) HasNext() bool {
 
 // leetcode problem No. 174
 func calculateMinimumHP(dungeon [][]int) int {
-	m := len(dungeon)
-	n := len(dungeon[0])
-	// hp[i][j] represents the min hp needed at position (i, j)
-	// Add dummy row and column at bottom and right side
-	hp := make([][]int, m+1)
-	for i := 0; i <= m; i++ {
-		hp[i] = make([]int, n+1)
-		for j := 0; j <= n; j++ {
-			hp[i][j] = math.MaxInt
+	m, n := len(dungeon), len(dungeon[0])
+	dp := make([][]int, m) // dp[i][j] stands for the minimum hp required at cell[i][j]
+	for i := range dp {
+		dp[i] = make([]int, n)
+	}
+
+	if need := 1 - dungeon[m-1][n-1]; need > 0 {
+		dp[m-1][n-1] = need
+	} else {
+		dp[m-1][n-1] = 1
+	}
+
+	for i := m - 2; i >= 0; i-- {
+		if need := dp[i+1][n-1] - dungeon[i][n-1]; need > 0 {
+			dp[i][n-1] = need
+		} else {
+			dp[i][n-1] = 1
 		}
 	}
-	hp[m][n-1] = 1 // the left cell besize the bottom right cell should at least 1 health
-	hp[m-1][n] = 1 // the upper cell above the bottom right cell should at least 1 health
-	for i := m - 1; i >= 0; i-- {
-		for j := n - 1; j >= 0; j-- {
-			need := min(hp[i+1][j], hp[i][j+1]) - dungeon[i][j]
-			if need <= 0 {
-				hp[i][j] = 1
+
+	for j := n - 2; j >= 0; j-- {
+		if need := dp[m-1][j+1] - dungeon[m-1][j]; need > 0 {
+			dp[m-1][j] = need
+		} else {
+			dp[m-1][j] = 1
+		}
+	}
+
+	for i := m - 2; i >= 0; i-- {
+		for j := n - 2; j >= 0; j-- {
+			need := min(dp[i+1][j], dp[i][j+1]) - dungeon[i][j]
+			if need > 0 {
+				dp[i][j] = need
 			} else {
-				hp[i][j] = need
+				dp[i][j] = 1
 			}
 		}
 	}
-	return hp[0][0]
+
+	return dp[0][0]
 }
 
 func largestNumber(nums []int) string {
