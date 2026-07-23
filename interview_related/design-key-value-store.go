@@ -21,8 +21,8 @@ func (kv *KVStore) Get(key string) any {
 	kv.mu.RLock()
 	defer kv.mu.RUnlock()
 	// check transaction first
-	for _, txn := range kv.txns {
-		if val, ok := txn[key]; ok {
+	for i := len(kv.txns) - 1; i >= 0; i-- {
+		if val, ok := kv.txns[i][key]; ok {
 			return val
 		}
 	}
@@ -68,7 +68,7 @@ func (kv *KVStore) Commit() {
 	lastTxn := kv.txns[len(kv.txns)-1]
 	kv.txns = kv.txns[:len(kv.txns)-1] // pop last
 
-	if len(lastTxn) == 0 { // merge to base
+	if len(kv.txns) == 0 { // no more txns exist, merge to base
 		for k, v := range lastTxn {
 			if v == nil {
 				delete(kv.base, k)
@@ -76,7 +76,7 @@ func (kv *KVStore) Commit() {
 				kv.base[k] = v
 			}
 		}
-	} else {
+	} else { // merge to previous
 		curLastTxn := kv.txns[len(kv.txns)-1]
 		for k, v := range lastTxn {
 			curLastTxn[k] = v
