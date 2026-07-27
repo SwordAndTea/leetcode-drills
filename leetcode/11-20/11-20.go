@@ -26,114 +26,100 @@ func maxArea(height []int) int {
 	return maxV
 }
 
-// Integer to Roman
+// leetcode problem No. 12
 func intToRoman(num int) string {
-	var lookupMap = map[int]string{
-		1:    "I",
-		2:    "II",
-		3:    "III",
-		4:    "IV",
-		5:    "V",
-		6:    "VI",
-		7:    "VII",
-		8:    "VIII",
-		9:    "IX",
-		10:   "X",
-		20:   "XX",
-		30:   "XXX",
-		40:   "XL",
-		50:   "L",
-		60:   "LX",
-		70:   "LXX",
-		80:   "LXXX",
-		90:   "XC",
-		100:  "C",
-		200:  "CC",
-		300:  "CCC",
-		400:  "CD",
-		500:  "D",
-		600:  "DC",
-		700:  "DCC",
-		800:  "DCCC",
-		900:  "CM",
-		1000: "M",
-		2000: "MM",
-		3000: "MMM",
+	ans := []rune{}
+	for num/1000 > 0 {
+		ans = append(ans, 'M')
+		num -= 1000
 	}
-	result := make([]byte, 0, 8)
-	eachNums := make([]int, 4)
-	top := -1
-	for num != 0 {
-		top++
-		eachNums[top] = num % 10
-		num = num / 10
+	if num >= 900 {
+		ans = append(ans, 'C', 'M')
+		num -= 900
 	}
-
-	base := 1
-	for top >= 0 {
-		base = 1
-		for i := 0; i < top; i++ {
-			base *= 10
-		}
-		result = append(result, []byte(lookupMap[base*eachNums[top]])...)
-		top--
+	for num/500 > 0 {
+		ans = append(ans, 'D')
+		num -= 500
 	}
-
-	return string(result)
+	if num >= 400 {
+		ans = append(ans, 'C', 'D')
+		num -= 400
+	}
+	for num/100 > 0 {
+		ans = append(ans, 'C')
+		num -= 100
+	}
+	if num >= 90 {
+		ans = append(ans, 'X', 'C')
+		num -= 90
+	}
+	for num/50 > 0 {
+		ans = append(ans, 'L')
+		num -= 50
+	}
+	if num >= 40 {
+		ans = append(ans, 'X', 'L')
+		num -= 40
+	}
+	for num/10 > 0 {
+		ans = append(ans, 'X')
+		num -= 10
+	}
+	if num >= 9 {
+		ans = append(ans, 'I', 'X')
+		num -= 9
+	}
+	for num/5 > 0 {
+		ans = append(ans, 'V')
+		num -= 5
+	}
+	if num >= 4 {
+		ans = append(ans, 'I', 'V')
+		num -= 4
+	}
+	for num/1 > 0 {
+		ans = append(ans, 'I')
+		num -= 1
+	}
+	return string(ans)
 }
 
 // leetcode problem No. 13
-
 func romanToInt(s string) int {
 	ans := 0
-	i := 0
-	n := len(s)
-	for i < n {
-		if s[i] == 'I' {
-			if i+1 < n && s[i+1] == 'V' {
-				ans += 4
-				i += 2
-			} else if i+1 < n && s[i+1] == 'X' {
-				ans += 9
-				i += 2
-			} else {
-				ans += 1
-				i += 1
+	for i, c := range s {
+		if c == 'I' {
+			ans += 1
+		} else if c == 'V' {
+			if i > 0 && s[i-1] == 'I' {
+				ans -= 2
 			}
-		} else if s[i] == 'V' {
 			ans += 5
-			i += 1
-		} else if s[i] == 'X' {
-			if i+1 < n && s[i+1] == 'L' {
-				ans += 40
-				i += 2
-			} else if i+1 < n && s[i+1] == 'C' {
-				ans += 90
-				i += 2
-			} else {
-				ans += 10
-				i += 1
+		} else if c == 'X' {
+			if i > 0 && s[i-1] == 'I' {
+				ans -= 2
 			}
-		} else if s[i] == 'L' {
+			ans += 10
+		} else if c == 'L' {
+			if i > 0 && s[i-1] == 'X' {
+				ans -= 20
+			}
 			ans += 50
-			i += 1
-		} else if s[i] == 'C' {
-			if i+1 < n && s[i+1] == 'D' {
-				ans += 400
-				i += 2
-			} else if i+1 < n && s[i+1] == 'M' {
-				ans += 900
-				i += 2
-			} else {
-				ans += 100
-				i += 1
+		} else if c == 'C' {
+			if i > 0 && s[i-1] == 'X' {
+				ans -= 20
 			}
-		} else if s[i] == 'D' {
+			ans += 100
+		} else if c == 'D' {
+			if i > 0 && s[i-1] == 'C' {
+				ans -= 200
+			}
 			ans += 500
-			i += 1
-		} else if s[i] == 'M' {
+		} else if c == 'M' {
+			if i > 0 && s[i-1] == 'C' {
+				ans -= 200
+			}
 			ans += 1000
-			i += 1
 		}
 	}
 	return ans
