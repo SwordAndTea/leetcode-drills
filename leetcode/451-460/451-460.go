@@ -1,5 +1,26 @@
 package _451_460
 
+import "sort"
+
+// leetcode problem No. 455
+func findContentChildren(g []int, s []int) int {
+	sort.Ints(g)
+	sort.Ints(s)
+	i := 0
+	j := 0
+	ans := 0
+	for i < len(g) && j < len(s) {
+		if g[i] <= s[j] {
+			ans++
+			i++
+			j++
+		} else {
+			j++
+		}
+	}
+	return ans
+}
+
 // leetcode problem No. 460
 
 type LFUCacheNode struct {
