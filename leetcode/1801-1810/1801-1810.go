@@ -6,7 +6,7 @@ func maxValue(n int, index int, maxSum int) int {
 		ans := 0
 		startIndex := max(0, index-value+1)
 		if startIndex > 0 {
-			ans += startIndex
+			ans += startIndex // add all the ones
 		}
 		numOfValue := index - startIndex + 1
 		startValue := max(1, value-index)
@@ -15,7 +15,7 @@ func maxValue(n int, index int, maxSum int) int {
 
 		endIndex := min(n-1, value+index-1)
 		if endIndex < n-1 {
-			ans += n - 1 - endIndex
+			ans += n - 1 - endIndex // add all the ones
 		}
 		numOfValue = endIndex - index + 1
 		endValue := max(1, value-(n-1-index))

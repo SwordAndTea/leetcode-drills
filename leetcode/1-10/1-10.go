@@ -112,6 +112,7 @@ func lengthOfLongestSubstring(s string) int {
 	lastIndex := make(map[rune]int) // record the last appear index
 	ans := 1
 	start := 0 // the start index of the substring, serves as left
+	//basically we find the longest string with no repeating from start
 	for i, c := range s {
 		if idx, ok := lastIndex[c]; ok && idx >= start {
 			// ok means c is repeated, at this moment, idx points to the last repeated character
@@ -184,7 +185,6 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 }
 
 // leetcode problem No. 5
-
 func longestPalindrome(s string) string {
 	n := len(s)
 	dp := make([][]bool, n)

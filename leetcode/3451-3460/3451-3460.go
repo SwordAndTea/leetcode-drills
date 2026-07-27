@@ -15,25 +15,31 @@ func separateSquares(squares [][]int) float64 {
 		}
 	}
 
-	// check, calculate the total area below limitY, and check it's the half of total Area
-	check := func(limitY float64) bool {
-		area := 0.0
+	// get total area blow the line and total area above the line
+	getArea := func(targetY float64) (float64, float64) {
+		areaAbove := 0.0
+		areaBelow := 0.0
 		for _, sq := range squares {
-			y, l := sq[1], sq[2]
-			if float64(y) < limitY {
-				overlap := math.Min(limitY-float64(y), float64(l))
-				area += float64(l) * overlap
+			y, sideLength := sq[1], sq[2]
+			if float64(y+sideLength) < targetY {
+				areaBelow += float64(sideLength * sideLength)
+			} else if float64(y) > targetY {
+				areaAbove += float64(sideLength * sideLength)
+			} else {
+				areaAbove += (float64(y+sideLength) - targetY) * float64(sideLength)
+				areaBelow += (targetY - float64(y)) * float64(sideLength)
 			}
 		}
 
-		return area >= totalArea/2.0
+		return areaAbove, areaBelow
 	}
 
 	lo, hi := 0.0, maxY
 	eps := 1e-5
 	for math.Abs(hi-lo) > eps {
 		mid := (hi + lo) / 2.0
-		if check(mid) {
+		areaAbove, areaBelow := getArea(mid)
+		if areaAbove <= areaBelow { // we need to find the minimum, so there should be less or equal
 			hi = mid
 		} else {
 			lo = mid

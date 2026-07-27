@@ -7,7 +7,6 @@ type TreeNode struct {
 }
 
 // leetcode problem No. 1530
-
 func countPairs(root *TreeNode, distance int) int {
 	ans := 0
 	var recursive func(*TreeNode) map[int]int /*return is the leaves count by depth*/
