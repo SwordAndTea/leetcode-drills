@@ -2,7 +2,13 @@ package _31_40
 
 import "testing"
 
-func TestTmp(t *testing.T) {
+func TestNextPermutation(t *testing.T) {
+	p := []int{1, 4, 3, 2}
+	nextPermutation(p)
+	t.Logf("%+v", p)
+}
+
+func TestSolveSudoku(t *testing.T) {
 	solveSudoku([][]byte{
 		{'5', '3', '.', '.', '7', '.', '.', '.', '.'},
 		{'6', '.', '.', '1', '9', '5', '.', '.', '.'},

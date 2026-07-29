@@ -7,37 +7,40 @@ import (
 )
 
 // leetcode problem No. 31
-
 func nextPermutation(nums []int) {
 	if len(nums) == 1 {
 		return
 	}
 	if len(nums) == 2 {
 		nums[0], nums[1] = nums[1], nums[0]
+		return
 	}
 
-	// find the beginning of last ascending sequence
-	i := len(nums) - 2
-	for i >= 0 && nums[i] >= nums[i+1] {
+	// find the ending of last ascending sequence
+	i := len(nums) - 1
+	for i > 0 && nums[i-1] >= nums[i] {
 		i--
 	}
+	i--
 
-	if i == 0 {
+	if i == -1 {
 		slices.Reverse(nums)
 		return
 	}
 
-	j := i - 1
-	for j > i && nums[j] <= nums[i] {
-		j++
+	// the number after i will be descending, we find the first number from back that is greater than the nums[i]
+	j := len(nums) - 1
+	for ; j > i; j-- {
+		if nums[j] > nums[i] {
+			break
+		}
 	}
 
 	nums[i], nums[j] = nums[j], nums[i]
-	slices.Reverse(nums[j+1:])
+	slices.Reverse(nums[i+1:])
 }
 
 // leetcode problem No. 32
-
 func longestValidParentheses(s string) int {
 	n := len(s)
 	// dp[i] stands for longest ValidParentheses that ends the s[i]
