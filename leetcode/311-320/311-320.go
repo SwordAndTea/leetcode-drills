@@ -29,7 +29,6 @@ func removeDuplicateLetters(s string) string {
 }
 
 // leetcode problem No. 317
-
 func shortestDistance(grid [][]int) int {
 	m := len(grid)
 	n := len(grid[0])
@@ -44,8 +43,7 @@ func shortestDistance(grid [][]int) int {
 		visited[i] = make([]bool, n)
 	}
 
-	var bfs func(int, int, [][]bool)
-	bfs = func(startI, startJ int, visitMap [][]bool) {
+	bfs := func(startI, startJ int, visitMap [][]bool) {
 		q := [][2]int{{startI, startJ}}
 		visitMap[startI][startJ] = true
 		distance := 0

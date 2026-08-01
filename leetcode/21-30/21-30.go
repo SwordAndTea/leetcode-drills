@@ -309,44 +309,52 @@ func divide(dividend int, divisor int) int {
 	return int(result)
 }
 
+// leetcode problem No. 30
 func findSubstring(s string, words []string) []int {
-	wordsMap := make(map[string]int)
-
-	for _, w := range words {
-		wordsMap[w] += 1
-	}
-
+	// note: this question we don't allow substring contains word that not appears in words
 	wordLen := len(words[0])
-	concatenatedWordsLen := len(words) * wordLen
+	wordMap := make(map[string]int)
+	totalWorlds := 0
+	for _, w := range words {
+		wordMap[w]++
+		totalWorlds++
+	}
+	ans := make([]int, 0)
+	for offset := 0; offset < wordLen; offset++ {
+		left := offset
+		right := offset
+		matchCount := 0
+		curMatchInfo := make(map[string]int) // one important hint here is that:
+		// if curMatchInfo is not empty, it only contains string from wolds list
+		for right <= len(s)-wordLen {
+			wordRight := s[right : right+wordLen]
+			if _, ok := wordMap[wordRight]; ok { // match
+				matchCount++
+				curMatchInfo[wordRight]++
 
-	result := make([]int, 0, 16)
-
-	for i := 0; i <= len(s)-concatenatedWordsLen; i++ {
-		w := s[i : i+wordLen]
-		if wordsMap[w] != 0 {
-			wordAppearCount := make(map[string]int)
-			wordAppearCount[w] = 1
-			appearCount := 1
-			if appearCount == len(words) {
-				result = append(result, i)
-				continue
-			}
-			strEndIndex := i + concatenatedWordsLen
-			for j := i + wordLen; j < strEndIndex && j+wordLen <= strEndIndex; j += wordLen {
-				w = s[j : j+wordLen]
-				wordAppearCount[w] += 1
-				if wordAppearCount[w] <= wordsMap[w] {
-					appearCount += 1
-					if appearCount == len(words) {
-						result = append(result, i)
-						break
-					}
-				} else {
-					break
+				for curMatchInfo[wordRight] > wordMap[wordRight] {
+					wordLeft := s[left : left+wordLen]
+					curMatchInfo[wordLeft]--
+					left = left + wordLen
+					matchCount--
 				}
+
+				if matchCount == totalWorlds {
+					ans = append(ans, left)
+					// after we move left to next, the substring will definitely not match
+					leftWord := s[left : left+wordLen]
+					curMatchInfo[leftWord]--
+					matchCount--
+					left = left + wordLen
+				}
+				right += wordLen
+			} else { // not match
+				left = right + wordLen
+				right = left
+				matchCount = 0
+				curMatchInfo = map[string]int{}
 			}
 		}
 	}
-
-	return result
+	return ans
 }

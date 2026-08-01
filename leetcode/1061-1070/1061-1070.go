@@ -25,11 +25,10 @@ func assignBikes(workers [][]int, bikes [][]int) int {
 		}
 	}
 
-	dp[0][0] = 0 // Note, don't modify dp[i][0] and dp[0][j]
 	for i := 1; i <= n; i++ {
-		for j := 0; j < 1<<m; j++ {
+		for j := 0; j < 1<<m; j++ { // for each bike combination
 			for k := 0; k < m; k++ { // for each bike
-				if j>>k&1 == 1 { // if the k-th bike is assigned to i-th worker
+				if j>>k&1 == 1 { // if the k-th bike is assigned to (i-1)-th worker
 					worker := workers[i-1]
 					bike := bikes[k]
 					d := abs(worker[0]-bike[0]) + abs(worker[1]-bike[1])

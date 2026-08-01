@@ -14,7 +14,7 @@ func countVowelSubstrings(word string) int {
 	validSubStringStartIndex := -1 // it serves as the left indicator of the two pointer solution
 	ans := 0
 	for i, c := range word {
-		if _, ok := vowelCharIndex[c]; ok {
+		if _, ok := vowelCharIndex[c]; ok { // if is vowel char
 			vowelCharIndex[c] = i
 			minIndexOfVowelChar := i // the min last appear index of vowel char
 			for _, index := range vowelCharIndex {

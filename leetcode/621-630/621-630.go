@@ -50,7 +50,7 @@ func (this *MyCircularQueue) Rear() int {
 	if this.IsEmpty() {
 		return -1
 	}
-	return this.buffer[this.k+this.rear%(this.k+1)]
+	return this.buffer[(this.k+this.rear)%(this.k+1)] // (k+1 + this.rear -1) % (this.k+1)
 }
 
 func (this *MyCircularQueue) IsEmpty() bool {

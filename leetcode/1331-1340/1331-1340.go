@@ -66,3 +66,9 @@ func maxProduct(root *TreeNode) int {
 	recursive(root)
 	return maxVal%1_000_000_000 + 7
 }
+
+// leetcode problem No. 1340
+func maxJumps(arr []int, d int) int {
+	// TODO: finish this
+	return 0
+}

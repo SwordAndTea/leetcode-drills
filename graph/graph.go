@@ -98,8 +98,8 @@ func (g *Graph) BFSTraverse() []int {
 // the V^2 comes from for each iteration, we need go through the queue to find the node with minimum distance.
 // if we use the heap to help find the vertex with minimal distance, the time complexity can be reduced to O(VlogV + E)
 func (g *Graph) ShortestPathDijkstra(start int, end int) (int, []int) {
-	visit := make(map[int]bool)
-	visit[start] = true
+	closed := make(map[int]bool)
+	closed[start] = true
 
 	distance := make(map[int]int) // distance that store distance starting from start point
 	distance[start] = 0
@@ -110,9 +110,9 @@ func (g *Graph) ShortestPathDijkstra(start int, end int) (int, []int) {
 	curNode := start    // the node has the min distance that not yet closed
 	hasNextNode := true // has next node with min distance yet not closed
 	for hasNextNode {
-		visit[curNode] = true
+		closed[curNode] = true
 		for _, edge := range g.AdjacencyList[curNode] {
-			if !visit[edge.End] {
+			if !closed[edge.End] {
 				if dis, ok := distance[edge.End]; !ok || dis > distance[curNode]+edge.Weight {
 					distance[edge.End] = distance[curNode] + edge.Weight
 					predecessor[edge.End] = curNode
@@ -124,7 +124,7 @@ func (g *Graph) ShortestPathDijkstra(start int, end int) (int, []int) {
 		minV := math.MaxInt
 		hasNextNode = false
 		for vertex, dis := range distance {
-			if !visit[vertex] && dis < minV {
+			if !closed[vertex] && dis < minV {
 				minV = dis
 				curNode = vertex
 				hasNextNode = true

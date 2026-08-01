@@ -30,7 +30,7 @@ func trap(height []int) int {
 	left := 0
 	right := len(height) - 1
 	ans := 0
-	for left < right-1 {
+	for left < right-1 { // note: we use right-1 as we can not trap water with two adjacent values
 		if height[left] < height[right] {
 			ans += max(height[left]-height[left+1], 0)
 			height[left+1] = max(height[left], height[left+1])

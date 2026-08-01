@@ -42,6 +42,8 @@ func change(amount int, coins []int) int {
 	// for each coin, dp[i] represent the number of ways to form i-amount
 	// by only use that coin and the coins before that coin
 	// this can prevent redundant calculation
+	// we can think it as a two-dimensional DP, but we optimized the space usage
+
 	// if we put the inner loop to the outside, there will be redundant calculation
 	for _, coin := range coins {
 		for i := coin; i <= amount; i++ {

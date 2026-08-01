@@ -43,23 +43,25 @@ func nextPermutation(nums []int) {
 // leetcode problem No. 32
 func longestValidParentheses(s string) int {
 	n := len(s)
-	// dp[i] stands for longest ValidParentheses that ends the s[i]
-	dp := make([]int, n)
-
+	if n < 2 {
+		return 0
+	}
+	dp := make([]int, n) // dp[i] stands for the longest valid parentheses that end with s[i]
 	ans := 0
-	for i := 1; i < n; i++ {
+	if s[0] == '(' && s[1] == ')' {
+		dp[1] = 2
+		ans = 2
+	}
+	for i := 2; i < n; i++ {
 		if s[i] == ')' {
 			if s[i-1] == '(' {
-				if i-2 >= 0 {
-					dp[i] = dp[i-2] + 2
-				}
-			} else {
-				j := i - 1 - dp[i-1]
+				dp[i] = dp[i-2] + 2
+			} else { // s[i-1] == ')'
+				j := i - dp[i-1] - 1
 				if j >= 0 && s[j] == '(' {
-					if j-1 >= 0 {
-						dp[i] = dp[j-1] + dp[i-1] + 2
-					} else {
-						dp[i] = dp[i-1] + 2
+					dp[i] = dp[i-1] + 2
+					if j-1 >= 0 { // j-1 might be also a possible ending of a valid parentheses
+						dp[i] += dp[j-1]
 					}
 				}
 			}

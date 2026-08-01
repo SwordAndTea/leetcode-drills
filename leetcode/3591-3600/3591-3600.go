@@ -12,21 +12,21 @@ func minIncrease(n int, edges [][]int, cost []int) int {
 	ans := 0
 	var dfs func(curNode int, parent int) int // dfs get the cost from curNode to all it's children
 	dfs = func(curNode int, parent int) int {
-		costByLevel := []int{}
+		costOfChildren := []int{}
 		for _, child := range tree[curNode] {
 			if child == parent {
 				continue
 			}
-			costByLevel = append(costByLevel, dfs(child, curNode))
+			costOfChildren = append(costOfChildren, dfs(child, curNode))
 		}
-		if len(costByLevel) == 0 {
+		if len(costOfChildren) == 0 {
 			return cost[curNode]
 		}
-		if len(costByLevel) == 1 {
-			return costByLevel[0] + cost[curNode]
+		if len(costOfChildren) == 1 {
+			return costOfChildren[0] + cost[curNode]
 		}
-		maxCostValue := slices.Max(costByLevel)
-		for _, v := range costByLevel {
+		maxCostValue := slices.Max(costOfChildren)
+		for _, v := range costOfChildren {
 			if v != maxCostValue {
 				ans++
 			}

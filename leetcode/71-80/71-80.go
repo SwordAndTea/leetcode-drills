@@ -163,6 +163,7 @@ func sortColors(nums []int) {
 
 // leetcode problem No. 76
 func minWindow(s string, t string) string {
+	// note: this question we allow substring contains character that not appears in t
 	if len(s) < len(t) {
 		return ""
 	}
@@ -171,7 +172,7 @@ func minWindow(s string, t string) string {
 		charCounts[uint8(c)] += 1
 	}
 
-	matchCount := 0
+	matchCount := 0 // use match count to avoid compare between two maps
 	matchInfo := make(map[uint8]int)
 	left, right := 0, 0
 	minLen := math.MaxInt
@@ -184,7 +185,7 @@ func minWindow(s string, t string) string {
 			}
 			matchInfo[c]++
 		}
-		right++
+		right++ // right now points to the next position
 		if matchCount == len(t) {
 			// move left
 			for left < right {

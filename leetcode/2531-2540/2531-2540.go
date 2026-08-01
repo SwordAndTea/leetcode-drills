@@ -9,8 +9,8 @@ func rangeAddQueries(n int, queries [][]int) [][]int {
 	for _, query := range queries {
 		for i := query[0]; i <= query[2]; i++ { //for each row
 			grid[i][query[1]]++
-			if query[3]+1 < n {
-				grid[i][query[3]+1]--
+			if end := query[3] + 1; end < n { // note: add 1 here
+				grid[i][end]--
 			}
 		}
 	}

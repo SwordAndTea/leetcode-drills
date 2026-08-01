@@ -4,36 +4,6 @@ import (
 	"container/heap"
 )
 
-// leetcode problem No. 374
-func topKFrequent(nums []int, k int) []int {
-	numCounter := make(map[int]int)
-	maxFreq := 0
-	for _, num := range nums {
-		numCounter[num]++
-		if numCounter[num] > maxFreq {
-			maxFreq = numCounter[num]
-		}
-	}
-
-	buckets := make([][]int, maxFreq+1)
-	for num, count := range numCounter {
-		buckets[count] = append(buckets[count], num)
-	}
-
-	result := make([]int, 0, k)
-	for i := maxFreq; i >= 1; i-- {
-		bucket := buckets[i]
-		if len(bucket) != 0 {
-			if len(result)+len(bucket) < k {
-				result = append(result, bucket...)
-			} else {
-				result = append(result, bucket[:k-len(result)]...)
-			}
-		}
-	}
-	return result
-}
-
 // leetcode problem No. 373
 type ValuePair struct {
 	sum    int
@@ -68,7 +38,7 @@ func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
 	ans := make([][]int, k)
 	minHeap := &MinHeap{}
 
-	heap.Init(minHeap)
+	//heap.Init(minHeap)
 	heap.Push(minHeap, &ValuePair{sum: nums1[0] + nums2[0], indexI: 0, indexJ: 0})
 	visited := make(map[int]map[int]bool)
 	visited[0] = make(map[int]bool)
@@ -104,4 +74,34 @@ func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
 		}
 	}
 	return ans
+}
+
+// leetcode problem No. 374
+func topKFrequent(nums []int, k int) []int {
+	numCounter := make(map[int]int)
+	maxFreq := 0
+	for _, num := range nums {
+		numCounter[num]++
+		if numCounter[num] > maxFreq {
+			maxFreq = numCounter[num]
+		}
+	}
+
+	buckets := make([][]int, maxFreq+1)
+	for num, count := range numCounter {
+		buckets[count] = append(buckets[count], num)
+	}
+
+	result := make([]int, 0, k)
+	for i := maxFreq; i >= 1; i-- {
+		bucket := buckets[i]
+		if len(bucket) != 0 {
+			if len(result)+len(bucket) < k {
+				result = append(result, bucket...)
+			} else {
+				result = append(result, bucket[:k-len(result)]...)
+			}
+		}
+	}
+	return result
 }

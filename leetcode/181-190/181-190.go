@@ -23,24 +23,12 @@ func max(a, b int) int {
 	return b
 }
 
+// leetcode problem No. 188
 func maxProfit(k int, prices []int) int {
 	n := len(prices)
-	if n == 1 {
-		return 0
-	}
 
-	if k >= n/2 {
-		ans := 0
-		for i := 1; i < n; i++ {
-			if prices[i] > prices[i-1] {
-				ans += prices[i] - prices[i-1]
-			}
-		}
-		return ans
-	}
-
-	// dp[i, j] represents the max profit up until prices[j] using at most i transactions.
-	// dp[i, j] = max(dp[i, j-1], prices[j] - prices[jj] + dp[i-1, jj]), jj in range of [0, j-1]
+	// dp[i][j] represents the max profit for prices[0:j(include)] using at most i transactions.
+	// dp[i][j] = max(dp[i][j-1], prices[j] - prices[jj] + dp[i-1][jj]), jj in range of [0, j-1(include)]
 	// dp[i][j-1] means there will no transaction at price[j]
 	dp := make([][]int, k+1)
 	for i := range dp {
@@ -65,6 +53,9 @@ func maxProfit(k int, prices []int) int {
 	//dp[i-1][7] - prices[7]
 
 	for i := 1; i <= k; i++ {
+		// here we used some optimization:
+		// since prices[j] - prices[jj] + dp[i-1, jj] = prices[j] + (dp[i-1][jj] - prices[jj])
+		// prices[j] is fixed we can record the maximum dp[i-1][jj] - prices[jj] at iteration, instead re-finding it
 		localMax := dp[i-1][0] - prices[0]
 		for j := 1; j < n; j++ {
 			dp[i][j] = max(dp[i][j-1], prices[j]+localMax)
