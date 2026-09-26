@@ -24,7 +24,7 @@ func assignBikes(workers [][]int, bikes [][]int) int {
 			dp[i][j] = math.MaxInt
 		}
 	}
-
+	dp[0][0] = 0
 	for i := 1; i <= n; i++ {
 		for j := 0; j < 1<<m; j++ { // for each bike combination
 			for k := 0; k < m; k++ { // for each bike

@@ -69,6 +69,35 @@ func maxProduct(root *TreeNode) int {
 
 // leetcode problem No. 1340
 func maxJumps(arr []int, d int) int {
-	// TODO: finish this
-	return 0
+	n := len(arr)
+	// dp[i] stands for the maximum number of indices can visit start from i
+	dp := make([]int, n)
+
+	var dfs func(index int) int
+	dfs = func(index int) int {
+		if dp[index] > 0 { // dp[index] > 0 means dp[index] is solved
+			return dp[index]
+		}
+		dp[index] = 1
+		for i := index - 1; i >= max(0, index-d); i-- {
+			if arr[i] >= arr[index] {
+				break
+			}
+			dp[index] = max(dp[index], 1+dfs(i))
+		}
+
+		for i := index + 1; i <= min(n-1, index+d); i++ {
+			if arr[i] >= arr[index] {
+				break
+			}
+			dp[index] = max(dp[index], 1+dfs(i))
+		}
+
+		return dp[index]
+	}
+	ans := 0
+	for i := 0; i < n; i++ {
+		ans = max(ans, dfs(i))
+	}
+	return ans
 }

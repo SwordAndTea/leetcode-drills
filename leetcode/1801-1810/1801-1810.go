@@ -1,5 +1,7 @@
 package _1801_1810
 
+import "slices"
+
 // leetcode problem No. 1802
 func maxValue(n int, index int, maxSum int) int {
 	sum := func(value int) int {
@@ -43,4 +45,36 @@ func maxValue(n int, index int, maxSum int) int {
 	}
 
 	return left
+}
+
+// leetcode problem No. 1807
+func evaluate(s string, knowledge [][]string) string {
+	knowledgeMap := make(map[string]string)
+	for _, pair := range knowledge {
+		knowledgeMap[pair[0]] = pair[1]
+	}
+	n := len(s)
+	ans := make([]byte, 0, n)
+	i := 0
+
+	for i < n {
+		if s[i] == '(' {
+			j := i + 1
+			for j < n && s[j] != ')' {
+				j++
+			}
+			key := s[i+1 : j]
+			if str, ok := knowledgeMap[key]; ok {
+				ans = slices.Concat(ans, []byte(str))
+			} else {
+				ans = append(ans, '?')
+			}
+			i = j
+		} else {
+			ans = append(ans, s[i])
+		}
+		i++
+	}
+
+	return string(ans)
 }
