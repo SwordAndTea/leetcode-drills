@@ -130,7 +130,6 @@ func reverseList(head *ListNode) *ListNode {
 }
 
 // leetcode problem No. 207
-
 func canFinish(numCourses int, prerequisites [][]int) bool {
 	graph := make(map[int][]int)
 	inDegrees := make(map[int]int)
@@ -151,12 +150,7 @@ func canFinish(numCourses int, prerequisites [][]int) bool {
 			}
 		}
 	}
-	for _, v := range inDegrees {
-		if v != 0 {
-			return false
-		}
-	}
-	return true
+	return len(graph) == 0
 }
 
 // leetcode problem No. 208

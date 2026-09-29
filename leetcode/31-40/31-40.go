@@ -357,34 +357,40 @@ func combinationSum(candidates []int, target int) [][]int {
 }
 
 // leetcode problem No. 40
-
 func combinationSum2(candidates []int, target int) [][]int {
 	sort.Ints(candidates)
-	result := make([][]int, 0)
+	var ans [][]int
+	n := len(candidates)
+	var backtracking func(prevIndex int, curSum int, curList []int)
+	backtracking = func(prevIndex int, curSum int, curList []int) {
+		if curSum == target {
+			tmp := make([]int, len(curList))
+			copy(tmp, curList)
+			ans = append(ans, tmp)
+			return
+		}
 
-	var solveCombinationSum func(currentCandidates []int, sum int, startIndex int)
-	solveCombinationSum = func(currentCandidates []int, sum int, startIndex int) {
-		for i := startIndex; i < len(candidates); i++ {
-			v := candidates[i]
-			if sum+v == target {
-				newRes := make([]int, len(currentCandidates)+1)
-				copy(newRes, append(currentCandidates, v))
-				result = append(result, newRes)
-				return
-			}
+		if prevIndex >= n-1 {
+			return
+		}
 
-			if sum+v > target {
-				return
-			}
+		if curSum > target {
+			return
+		}
 
-			solveCombinationSum(append(currentCandidates, v), sum+v, i+1)
-			for i+1 < len(candidates) && candidates[i+1] == candidates[i] {
-				i++
+		i := prevIndex + 1
+		for i < n {
+			// choose current index
+			backtracking(i, curSum+candidates[i], append(curList, candidates[i]))
+			// auto revert state, then we should not choose the same number again, move to next possible candidate
+			j := i + 1
+			for j < n && candidates[j] == candidates[i] {
+				j++
 			}
+			i = j
 		}
 	}
 
-	solveCombinationSum([]int{}, 0, 0)
-
-	return result
+	backtracking(-1, 0, nil)
+	return ans
 }

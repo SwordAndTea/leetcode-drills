@@ -224,7 +224,6 @@ func kthSmallest(root *TreeNode, k int) int {
 }
 
 // leetcode problem No. 224
-
 func calculate(s string) int {
 	result := 0
 	numStack := []int{}
@@ -276,7 +275,6 @@ func calculate(s string) int {
 }
 
 // leetcode problem No. 227
-
 func calculate2(s string) int {
 	result := 0
 	num := 0

@@ -1,7 +1,6 @@
 package _71_70
 
 import (
-	"math"
 	"strings"
 )
 
@@ -163,53 +162,41 @@ func sortColors(nums []int) {
 
 // leetcode problem No. 76
 func minWindow(s string, t string) string {
-	// note: this question we allow substring contains character that not appears in t
-	if len(s) < len(t) {
-		return ""
-	}
-	charCounts := make(map[uint8]int)
-	for _, c := range t {
-		charCounts[uint8(c)] += 1
+	m, n := len(s), len(t)
+	targetFreqMap := make(map[byte]int)
+	for i := 0; i < n; i++ {
+		targetFreqMap[t[i]]++
 	}
 
-	matchCount := 0 // use match count to avoid compare between two maps
-	matchInfo := make(map[uint8]int)
-	left, right := 0, 0
-	minLen := math.MaxInt
-	minString := ""
-	for right < len(s) {
-		c := s[right]
-		if charCounts[c] != 0 {
-			if matchInfo[c] < charCounts[c] {
-				matchCount++
+	matchMap := make(map[byte]int)
+	curTotalMatchCount := 0
+	ans := ""
+	left := 0
+	for i := 0; i < m; i++ {
+		// i serves as the right indicator
+		if _, ok := targetFreqMap[s[i]]; ok {
+			matchMap[s[i]]++
+			if matchMap[s[i]] <= targetFreqMap[s[i]] {
+				curTotalMatchCount++
 			}
-			matchInfo[c]++
 		}
-		right++ // right now points to the next position
-		if matchCount == len(t) {
-			// move left
-			for left < right {
-				c = s[left]
-				if charCounts[c] != 0 {
-					matchInfo[c]--
-					if matchInfo[c] < charCounts[c] {
-						if right-left < minLen {
-							minLen = right - left
-							minString = s[left:right]
-						}
-						left++
-						matchCount--
-						break
+		if curTotalMatchCount == n {
+			for curTotalMatchCount == n {
+				if _, ok := targetFreqMap[s[left]]; ok {
+					matchMap[s[left]]--
+					if matchMap[s[left]] < targetFreqMap[s[left]] {
+						curTotalMatchCount--
 					}
 				}
 				left++
 			}
+			if v := i - left + 2; v < len(ans) || ans == "" {
+				ans = s[left-1 : i+1]
+			}
 		}
 	}
-	if minLen == math.MaxInt {
-		return ""
-	}
-	return minString
+
+	return ans
 }
 
 // leetcode problem No. 77

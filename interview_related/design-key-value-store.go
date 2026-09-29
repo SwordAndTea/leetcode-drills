@@ -22,6 +22,7 @@ func (kv *KVStore) Get(key string) any {
 	defer kv.mu.RUnlock()
 	// check transaction first
 	for i := len(kv.txns) - 1; i >= 0; i-- {
+		// check every level of transaction
 		if val, ok := kv.txns[i][key]; ok {
 			return val
 		}
