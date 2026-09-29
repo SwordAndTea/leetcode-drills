@@ -3,7 +3,6 @@ package _311_320
 import "math"
 
 // leetcode problem No. 316
-
 func removeDuplicateLetters(s string) string {
 	var stack []rune
 	inStack := map[rune]bool{}

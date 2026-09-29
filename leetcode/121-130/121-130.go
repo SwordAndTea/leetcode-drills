@@ -160,6 +160,7 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 		queue = queue[1:]
 		for _, w := range wordList {
 			if _, ok := distanceMap[w]; !ok && isWordLadder(curWord, w) {
+				// !ok means not visited
 				queue = append(queue, w)
 				distanceMap[w] = distanceMap[curWord] + 1
 			}
@@ -171,8 +172,8 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 		return result
 	}
 
-	var dfs func(curList []string)
-	dfs = func(curList []string) {
+	var backtracking func(curList []string)
+	backtracking = func(curList []string) {
 		curWord := curList[len(curList)-1]
 		if distanceMap[curWord] == 1 { // reached the word that next to beginWord
 			// new result is the reverse of curList
@@ -186,15 +187,16 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 		}
 
 		for _, w := range wordList {
-			if _, ok := distanceMap[w]; ok && isWordLadder(curWord, w) &&
-				distanceMap[curWord] == distanceMap[w]+1 { // must be reachable word and the word next to curWord
-				// this will help cut search branch
-				dfs(append(curList, w))
+			if d, ok := distanceMap[w]; ok && d == distanceMap[curWord]-1 &&
+				isWordLadder(curWord, w) {
+				// the word next to curWord and the word that one step close to the begin word
+				// this will help to cut search branch
+				backtracking(append(curList, w))
 			}
 		}
 	}
 
-	dfs([]string{endWord})
+	backtracking([]string{endWord})
 	return result
 }
 

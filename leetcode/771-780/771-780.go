@@ -15,23 +15,19 @@ func canTransform(start string, result string) bool {
 			break
 		}
 
-		if i < m && j >= n {
+		if (i < m && j >= n) || (i >= m && j < n) { // if found one 'L' or 'R' in one string but not in the other
 			return false
 		}
 
-		if i >= m && j < n {
+		if start[i] != result[j] { // if found different char
 			return false
 		}
 
-		if start[i] != result[j] {
+		if start[i] == 'L' && i < j { // if found 'L' in start string but its it need to move right
 			return false
 		}
 
-		if start[i] == 'L' && i < j {
-			return false
-		}
-
-		if start[i] == 'R' && i > j {
+		if start[i] == 'R' && i > j { // if found 'R' in start string but its it need to move left
 			return false
 		}
 		i++
